@@ -112,7 +112,9 @@ const variableColorList = [
             'OVERDUE',
             'LATE',
             'BAD',
-            'END_OF_LIFE'
+            'END_OF_LIFE',
+            'QA',
+            'UAT'
         ]
     }, {
         color: green,
@@ -146,13 +148,19 @@ const variableColorList = [
             'A',
             'AMBER',
             'YELLOW',
+            'DR',
+            'PRD/DR',
+            'PROD/DR',
+            'DR/PRD',
+            'DR/PROD',
             'OKAY'
         ]
     }, {
         color: blue,
         keys: [
+            'PROD',
+            'PRD',
             'PLANNED',
-            'OTHER',
             'CONCEPTUAL',
             'B',
             'NOT_STARTED',
@@ -161,6 +169,7 @@ const variableColorList = [
     }, {
         color: grey,
         keys: [
+            'OTHER',
             'UNKNOWN',
             'EXEMPT',
             'RETIRED',
@@ -182,6 +191,7 @@ const variableScaleMap = _.reduce(
         return acc;
     },
     {});
+
 
 const randomColorScale = d3.scale.category20();
 
