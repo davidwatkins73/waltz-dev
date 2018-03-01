@@ -29,6 +29,7 @@ import {BookmarkStore_API as BookmarkStore} from "../../bookmarks/services/bookm
 import {ChangeInitiativeStore_API as ChangeInitiativeStore} from "../../change-initiative/services/change-initiative-store";
 import {ChangeLogStore_API as ChangeLogStore} from "../../change-log/services/change-log-store";
 import {ComplexityStore_API as ComplexityStore} from "../../complexity/services/complexity-store";
+import {ConstraintsStore_API as ConstraintsStore} from "../../system/services/constraints-store";
 import {DatabaseStore_API as DatabaseStore} from "../../databases/services/database-store";
 import {DataTypeStore_API as DataTypeStore} from "../../data-types/services/data-type-store";
 import {DataTypeUsageStore_API as DataTypeUsageStore} from "../../data-type-usage/services/data-type-usage-store";
@@ -84,6 +85,7 @@ export const CORE_API = {
     ChangeInitiativeStore,
     ChangeLogStore,
     ComplexityStore,
+    ConstraintsStore,
     DatabaseStore,
     DataTypeStore,
     DataTypeUsageStore,

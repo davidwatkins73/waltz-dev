@@ -19,9 +19,11 @@
 
 import angular from 'angular';
 
-import {registerStores} from '../common/module-utils';
+import {registerServices, registerStores} from '../common/module-utils';
 import nagMessageService from "./services/nag-message-service";
-import * as  SettingsStore from "./services/settings-store";
+import * as SettingsStore from "./services/settings-store";
+import * as ConstraintsService from "./services/constraints-service";
+import * as ConstraintsStore from "./services/constraints-store";
 import settingsService from "./services/settings-service";
 import hierarchiesStore from "./services/hierarchies-store";
 import hasSetting from "./directives/has-setting";
@@ -36,7 +38,11 @@ export default () => {
         .service('SettingsService', settingsService)
         .service('HierarchiesStore', hierarchiesStore);
 
-    registerStores(module, [ SettingsStore ]);
+    registerStores(module, [
+        ConstraintsStore,
+        SettingsStore ]);
+
+    registerServices(module, [ ConstraintsService ]);
 
     module
         .directive('waltzHasSetting', hasSetting);

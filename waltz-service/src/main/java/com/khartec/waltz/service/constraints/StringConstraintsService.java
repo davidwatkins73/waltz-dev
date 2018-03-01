@@ -23,14 +23,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.khartec.waltz.model.ImmutableStringConstraintDefinition;
 import com.khartec.waltz.model.StringConstraintDefinition;
 import com.khartec.waltz.schema.DefaultSchema;
+import org.jooq.Field;
 import org.jooq.Table;
 import org.jooq.lambda.tuple.Tuple;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+@Service
 public class StringConstraintsService {
 
     /**
@@ -42,20 +45,26 @@ public class StringConstraintsService {
         return tables
                 .stream()
                 .flatMap(table -> table
-                            .fieldStream()
-                            .map(field -> Tuple.tuple(table.getName(), field)))
+                        .fieldStream()
+                        .map(field -> Tuple.tuple(
+                                table.getName(),
+                                field)))
                 .filter(tf -> tf.v2.getType().isAssignableFrom(String.class))
-                .map(tf -> {
-                    int length = tf.v2.getDataType().length();
-                    return ImmutableStringConstraintDefinition.builder()
-                            .objectName(tf.v1)
-                            .fieldName(tf.v2.getName())
-                            .length(length == 0
-                                    ? Integer.MAX_VALUE
-                                    : length)
-                            .build();
-                })
+                .map(tf -> ImmutableStringConstraintDefinition
+                        .builder()
+                        .objectName(tf.v1)
+                        .fieldName(tf.v2.getName())
+                        .length(getLength(tf.v2))
+                        .build())
                 .collect(toList());
+    }
+
+
+    private int getLength(Field<?> f) {
+        int length = f.getDataType().length();
+        return length == 0
+                ? Integer.MAX_VALUE
+                : length;
     }
 
 
@@ -67,4 +76,5 @@ public class StringConstraintsService {
         String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(fieldDefinitions);
         System.out.println(json);
     }
+
 }
