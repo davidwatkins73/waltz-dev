@@ -21,7 +21,8 @@ In a nutshell Waltz allows you to visualize and define your organisation's techn
 
 ## Corporate Contributors
 
-![DB Logo](https://www.gps-data-team.com/poi/icons/DB-DE.bmp "Deutsche Bank") Deutsche Bank - [press release](https://www.db.com/newsroom_news/2018/deutsche-bank-takes-next-step-in-open-source-journey-en-11484.htm) 
+![DB Logo](https://www.gps-data-team.com/poi/icons/DB-DE.bmp "Deutsche Bank") [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdavidwatkins73%2Fwaltz-dev.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdavidwatkins73%2Fwaltz-dev?ref=badge_shield)
+Deutsche Bank - [press release](https://www.db.com/newsroom_news/2018/deutsche-bank-takes-next-step-in-open-source-journey-en-11484.htm) 
 
 ## Technology Stack
 
@@ -39,6 +40,9 @@ In a nutshell Waltz allows you to visualize and define your organisation's techn
 - Microsoft SQL Server (2012+)  
   - requires [JOOQ Pro license](https://www.jooq.org/download/) to build from source
 
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdavidwatkins73%2Fwaltz-dev.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdavidwatkins73%2Fwaltz-dev?ref=badge_large)
 
 ### Client
 
