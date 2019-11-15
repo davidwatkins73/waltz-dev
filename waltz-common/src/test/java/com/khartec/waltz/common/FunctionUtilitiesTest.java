@@ -31,4 +31,37 @@ public class FunctionUtilitiesTest {
         String result = FunctionUtilities.time("foo", Unchecked.supplier(() -> { Thread.sleep(500); return "a"; }));
         assertEquals("a", result);
     }
+
+    @Test
+    public void FunctionUtilitiesTest() throws Exception {
+        // Arrange and Act
+        new FunctionUtilities();
+    }
+
+    @Test
+    public void alwaysBiTest() throws Exception {
+        // Arrange
+        String result = "aaaaa";
+
+        // Act
+        FunctionUtilities.<Object, Object, Object>alwaysBi(result);
+    }
+
+    @Test
+    public void alwaysTest() throws Exception {
+        // Arrange
+        String result = "aaaaa";
+
+        // Act
+        FunctionUtilities.<Object, Object>always(result);
+    }
+
+    @Test
+    public void discardResultTest() throws Exception {
+        // Arrange
+        String x = "aaaaa";
+
+        // Act
+        FunctionUtilities.discardResult(x);
+    }
 }

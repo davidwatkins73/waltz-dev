@@ -21,10 +21,11 @@ package com.khartec.waltz.common;
 
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.assertSame;
 
 public class MapBuilderTest {
 
@@ -52,6 +53,46 @@ public class MapBuilderTest {
         assertEquals(2, m.size());
         assertEquals(Integer.valueOf(1), m.get("a"));
         assertEquals("bob", m.get("b"));
+    }
+
+    @Test
+    public void addTest() throws Exception {
+        // Arrange
+        MapBuilder<Object, Object> mapBuilder = new MapBuilder<Object, Object>();
+        String k = "aaaaa";
+        String v = "aaaaa";
+
+        // Act
+        MapBuilder<Object, Object> actual = mapBuilder.add(k, v);
+
+        // Assert
+        assertSame(mapBuilder, actual);
+    }
+
+    @Test
+    public void buildTest() throws Exception {
+        // Arrange
+        MapBuilder<Object, Object> mapBuilder = new MapBuilder<Object, Object>();
+
+        // Act
+        Map<Object, Object> actual = mapBuilder.build();
+
+        // Assert
+        assertEquals(0, actual.size());
+    }
+
+    @Test
+    public void fromTest() throws Exception {
+        // Arrange
+        MapBuilder<Object, Object> mapBuilder = new MapBuilder<Object, Object>();
+        HashMap<Object, Object> hashMap = new HashMap<Object, Object>();
+        hashMap.put("aaaaa", "aaaaa");
+
+        // Act
+        mapBuilder.from(hashMap);
+
+        // Assert
+        assertEquals(1, hashMap.size());
     }
 
 }

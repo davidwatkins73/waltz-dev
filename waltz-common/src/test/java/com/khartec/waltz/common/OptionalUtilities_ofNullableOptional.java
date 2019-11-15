@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.Optional;
 
 import static com.khartec.waltz.common.OptionalUtilities.ofNullableOptional;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class OptionalUtilities_ofNullableOptional {
 
