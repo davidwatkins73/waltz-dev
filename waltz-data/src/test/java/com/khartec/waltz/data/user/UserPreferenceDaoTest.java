@@ -1,0 +1,81 @@
+package com.khartec.waltz.data.user;
+
+import com.khartec.waltz.model.user.ImmutableUserPreference;
+import com.khartec.waltz.model.user.UserPreference;
+import org.jooq.exception.DetachedException;
+import org.jooq.impl.DefaultConfiguration;
+import org.jooq.impl.DefaultDSLContext;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
+
+public class UserPreferenceDaoTest {
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
+  @Test
+  public void UserPreferenceDaoTest() throws Exception {
+    // Arrange
+    DefaultDSLContext defaultDSLContext = new DefaultDSLContext(new DefaultConfiguration());
+
+    // Act
+    new UserPreferenceDao(defaultDSLContext);
+
+    // Assert
+    assertEquals(
+        "DefaultConfiguration [\n\tconnected=false,\n\ttransactional=false,\n\tdialect=DEFAULT,\n\tdata={},\n\tsettings=\n\t\t<renderCatalog>true</renderCatalog><renderSchema>true</renderSchema><renderNameStyle>QUOTED</renderNameStyle><renderKeywordStyle>AS_IS</renderKeywordStyle><renderFormatted>false</renderFormatted><renderScalarSubqueriesForStoredFunctions>false</renderScalarSubqueriesForStoredFunctions><renderOrderByRownumberForEmulatedPagination>true</renderOrderByRownumberForEmulatedPagination><backslashEscaping>DEFAULT</backslashEscaping><paramType>INDEXED</paramType><paramCastMode>DEFAULT</paramCastMode><statementType>PREPARED_STATEMENT</statementType><executeLogging>true</executeLogging><executeWithOptimisticLocking>false</executeWithOptimisticLocking><executeWithOptimisticLockingExcludeUnversioned>false</executeWithOptimisticLockingExcludeUnversioned><attachRecords>true</attachRecords><updatablePrimaryKeys>false</updatablePrimaryKeys><reflectionCaching>true</reflectionCaching><cacheRecordMappers>true</cacheRecordMappers><throwExceptions>THROW_ALL</throwExceptions><fetchWarnings>true</fetchWarnings><fetchServerOutputSize>0</fetchServerOutputSize><returnAllOnUpdatableRecord>false</returnAllOnUpdatableRecord><returnRecordToPojo>true</returnRecordToPojo><mapJPAAnnotations>true</mapJPAAnnotations><mapConstructorParameterNames>false</mapConstructorParameterNames><queryTimeout>0</queryTimeout><maxRows>0</maxRows><fetchSize>0</fetchSize><debugInfoOnStackTrace>true</debugInfoOnStackTrace><inListPadding>false</inListPadding><inListPadBase>2</inListPadBase><delimiter>;</delimiter><emulateOnDuplicateKeyUpdateOnPrimaryKeyOnly>false</emulateOnDuplicateKeyUpdateOnPrimaryKeyOnly><executeUpdateWithoutWhere>LOG_DEBUG</executeUpdateWithoutWhere><executeDeleteWithoutWhere>LOG_DEBUG</executeDeleteWithoutWhere><parseWithMetaLookups>IGNORE_ON_FAILURE</parseWithMetaLookups><parseUnsupportedSyntax>IGNORE</parseUnsupportedSyntax><parseUnknownFunctions>FAIL</parseUnknownFunctions>\n]",
+        defaultDSLContext.toString());
+  }
+
+  @Test
+  public void clearPreferencesForUserTest() throws Exception {
+    // Arrange
+    UserPreferenceDao userPreferenceDao = new UserPreferenceDao(new DefaultDSLContext(new DefaultConfiguration()));
+    String userName = "aaaaa";
+
+    // Act and Assert
+    thrown.expect(DetachedException.class);
+    userPreferenceDao.clearPreferencesForUser(userName);
+  }
+
+  @Test
+  public void getPreferencesForUserTest() throws Exception {
+    // Arrange
+    UserPreferenceDao userPreferenceDao = new UserPreferenceDao(new DefaultDSLContext(new DefaultConfiguration()));
+    String userName = "aaaaa";
+
+    // Act and Assert
+    thrown.expect(DetachedException.class);
+    userPreferenceDao.getPreferencesForUser(userName);
+  }
+
+  @Test
+  public void savePreferenceTest() throws Exception {
+    // Arrange
+    UserPreferenceDao userPreferenceDao = new UserPreferenceDao(new DefaultDSLContext(new DefaultConfiguration()));
+    String userName = "aaaaa";
+    ImmutableUserPreference preference = null;
+
+    // Act and Assert
+    thrown.expect(DetachedException.class);
+    userPreferenceDao.savePreference(userName, preference);
+  }
+
+  @Test
+  public void savePreferencesForUserTest() throws Exception {
+    // Arrange
+    UserPreferenceDao userPreferenceDao = new UserPreferenceDao(new DefaultDSLContext(new DefaultConfiguration()));
+    String userName = "aaaaa";
+    ArrayList<UserPreference> arrayList = new ArrayList<UserPreference>();
+    arrayList.add(null);
+
+    // Act and Assert
+    thrown.expect(DetachedException.class);
+    userPreferenceDao.savePreferencesForUser(userName, arrayList);
+  }
+}
