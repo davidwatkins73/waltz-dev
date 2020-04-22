@@ -30,6 +30,8 @@ import com.khartec.waltz.model.actor.ImmutableActorCreateCommand;
 import com.khartec.waltz.model.logical_flow.ImmutableLogicalFlow;
 import com.khartec.waltz.model.logical_flow.LogicalFlow;
 import com.khartec.waltz.model.measurable_category.MeasurableCategory;
+import com.khartec.waltz.model.rel.CreateRelationshipCommand;
+import com.khartec.waltz.model.rel.ImmutableCreateRelationshipCommand;
 import com.khartec.waltz.schema.tables.records.*;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
@@ -56,7 +58,8 @@ public class BaseIntegrationTest {
     }
 
 
-    public LogicalFlow createLogicalFlow(EntityReference refA, EntityReference refB) {
+    public LogicalFlow createLogicalFlow(EntityReference refA,
+                                         EntityReference refB) {
         LogicalFlowDao dao = ctx.getBean(LogicalFlowDao.class);
         return dao.addFlow(ImmutableLogicalFlow
                 .builder()
@@ -119,7 +122,8 @@ public class BaseIntegrationTest {
     }
 
 
-    protected long createMeasurable(String name, long categoryId) {
+    protected long createMeasurable(String name,
+                                    long categoryId) {
         return getDsl()
                 .select(MEASURABLE.ID)
                 .from(MEASURABLE)
@@ -164,12 +168,17 @@ public class BaseIntegrationTest {
     }
 
 
-    protected long createRelationshipKind(String name, EntityKind kindA, EntityKind kindB) {
+    protected long createRelationshipKind(String name,
+                                          EntityKind kindA,
+                                          EntityKind kindB) {
         return createRelationshipKind(name, kindA, kindB, false);
     }
 
 
-    protected long createRelationshipKind(String name, EntityKind kindA, EntityKind kindB, boolean isReadOnly) {
+    protected long createRelationshipKind(String name,
+                                          EntityKind kindA,
+                                          EntityKind kindB,
+                                          boolean isReadOnly) {
         return getDsl()
                 .select(RELATIONSHIP_KIND.ID)
                 .from(RELATIONSHIP_KIND)
@@ -185,6 +194,20 @@ public class BaseIntegrationTest {
                     record.store();
                     return record.getId();
                 });
+    }
+
+
+    protected CreateRelationshipCommand mkRel(long idA,
+                                              long idB,
+                                              long rkId) {
+        return ImmutableCreateRelationshipCommand
+                .builder()
+                .idA(idA)
+                .idB(idB)
+                .relationshipKindId(rkId)
+                .description("desc")
+                .provenance("test")
+                .build();
     }
 
 

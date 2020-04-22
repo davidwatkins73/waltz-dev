@@ -29,8 +29,6 @@ import com.khartec.waltz.model.IdSelectionOptions;
 import com.khartec.waltz.model.UserTimestamp;
 import com.khartec.waltz.model.rel.BaseRelationship;
 import com.khartec.waltz.model.rel.ChangeInitiativeToMeasurableRel;
-import com.khartec.waltz.model.rel.CreateRelationshipCommand;
-import com.khartec.waltz.model.rel.ImmutableCreateRelationshipCommand;
 import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.exception.DataAccessException;
@@ -178,20 +176,6 @@ public class ChangeInitiativeToMeasurableDaoTest extends BaseIntegrationTest {
 
 
     // -- HELPERS ---
-
-    private CreateRelationshipCommand mkRel(long idA,
-                                            long idB,
-                                            long rkId) {
-        return ImmutableCreateRelationshipCommand
-                    .builder()
-                    .idA(idA)
-                    .idB(idB)
-                    .relationshipKindId(rkId)
-                    .description("desc")
-                    .provenance("test")
-                    .build();
-    }
-
 
     private Set<ChangeInitiativeToMeasurableRel> findByChangeInitiativeId(ChangeInitiativeToMeasurableRelDao dao,
                                                                           long id) {
