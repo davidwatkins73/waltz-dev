@@ -85,7 +85,8 @@ public class ChangeInitiativeToMeasurableRelDao {
     }
 
 
-    public Long createRelationship(CreateRelationshipCommand cmd, String userId) {
+    public Long createRelationship(CreateRelationshipCommand cmd,
+                                   String userId) {
         ChangeInitiativeToMeasurableRecord record = dsl.newRecord(CHANGE_INITIATIVE_TO_MEASURABLE);
 
         record.setChangeInitiativeId(cmd.idA());
@@ -104,7 +105,8 @@ public class ChangeInitiativeToMeasurableRelDao {
     }
 
 
-    public int removeRelationship(Long relId, String user) {
+    public int removeRelationship(Long relId,
+                                  String user) {
         Field<Boolean> readOnlySelector = DSL.select(RELATIONSHIP_KIND.IS_READONLY)
                 .from(RELATIONSHIP_KIND)
                 .innerJoin(CHANGE_INITIATIVE_TO_MEASURABLE)
@@ -120,7 +122,9 @@ public class ChangeInitiativeToMeasurableRelDao {
     }
 
 
-    public int updateDescription(Long relId, String newDesc, String userId) {
+    public int updateDescription(Long relId,
+                                 String newDesc,
+                                 String userId) {
         return dsl
                 .update(CHANGE_INITIATIVE_TO_MEASURABLE)
                 .set(CHANGE_INITIATIVE_TO_MEASURABLE.DESCRIPTION, newDesc)
