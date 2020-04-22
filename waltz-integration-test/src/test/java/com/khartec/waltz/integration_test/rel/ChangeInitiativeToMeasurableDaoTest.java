@@ -20,11 +20,13 @@ package com.khartec.waltz.integration_test.rel;
 
 import com.khartec.waltz.common.SetUtilities;
 import com.khartec.waltz.data.change_initiative.ChangeInitiativeIdSelectorFactory;
+import com.khartec.waltz.data.measurable.MeasurableIdSelectorFactory;
 import com.khartec.waltz.data.rel.ChangeInitiativeToMeasurableRelDao;
 import com.khartec.waltz.integration_test.BaseIntegrationTest;
 import com.khartec.waltz.model.EntityKind;
 import com.khartec.waltz.model.HierarchyQueryScope;
 import com.khartec.waltz.model.IdSelectionOptions;
+import com.khartec.waltz.model.UserTimestamp;
 import com.khartec.waltz.model.rel.BaseRelationship;
 import com.khartec.waltz.model.rel.ChangeInitiativeToMeasurableRel;
 import com.khartec.waltz.model.rel.CreateRelationshipCommand;
@@ -37,6 +39,7 @@ import org.junit.Test;
 
 import java.util.Set;
 
+import static com.khartec.waltz.common.CollectionUtilities.first;
 import static com.khartec.waltz.model.EntityReference.mkRef;
 import static com.khartec.waltz.model.IdSelectionOptions.mkOpts;
 import static com.khartec.waltz.schema.Tables.CHANGE_INITIATIVE_TO_MEASURABLE;
@@ -49,6 +52,7 @@ public class ChangeInitiativeToMeasurableDaoTest extends BaseIntegrationTest {
     private long ciId;
     private long rk1Id;
     private long rk2Id;
+    private long roRkId;
 
 
     @Before
@@ -58,6 +62,7 @@ public class ChangeInitiativeToMeasurableDaoTest extends BaseIntegrationTest {
         ciId = createChangeInitiative("testCI");
         rk1Id = createRelationshipKind("ci2mRelKind1", EntityKind.CHANGE_INITIATIVE, EntityKind.MEASURABLE);
         rk2Id = createRelationshipKind("ci2mRelKind2", EntityKind.CHANGE_INITIATIVE, EntityKind.MEASURABLE);
+        roRkId = createRelationshipKind("readOnlyCi2mRelKind", EntityKind.CHANGE_INITIATIVE, EntityKind.MEASURABLE, true);
     }
 
 
@@ -71,8 +76,11 @@ public class ChangeInitiativeToMeasurableDaoTest extends BaseIntegrationTest {
 
         assertTrue("Newly created relationship should have a positive id", relId > 0);
 
-        Set<ChangeInitiativeToMeasurableRel> rels = findByChangeInitiativeId(dao, ciId);
-        assertEquals(1, rels.size());
+        Set<ChangeInitiativeToMeasurableRel> relsByCi = findByChangeInitiativeId(dao, ciId);
+        assertEquals("can retrieve by change initiative selector", 1, relsByCi.size());
+
+        Set<ChangeInitiativeToMeasurableRel> relsByMeasurable = findByMeasurableId(dao, measurableId);
+        assertEquals("can retrieve by measurable selector", 1, relsByMeasurable.size());
     }
 
 
@@ -111,9 +119,69 @@ public class ChangeInitiativeToMeasurableDaoTest extends BaseIntegrationTest {
     }
 
 
+    @Test
+    public void commentsCanBeUpdated() {
+        ChangeInitiativeToMeasurableRelDao dao = ctx.getBean(ChangeInitiativeToMeasurableRelDao.class);
+
+        Long relId = dao.createRelationship(
+                mkRel(ciId, measurableId, rk1Id),
+                "testUser");
+
+        ChangeInitiativeToMeasurableRel rel = first(findByChangeInitiativeId(dao, ciId));
+
+        dao.updateDescription(relId, "new comment", "newTestUser");
+
+        ChangeInitiativeToMeasurableRel updatedRel = first(findByChangeInitiativeId(dao, ciId));
+
+        assertEquals(rel.id(), updatedRel.id());
+        assertEquals(rel.changeInitiativeId(), updatedRel.changeInitiativeId());
+        assertEquals(rel.measurableId(), updatedRel.measurableId());
+        assertEquals("new comment", updatedRel.description());
+        assertEquals("newTestUser", updatedRel.lastUpdated().map(UserTimestamp::by).orElse(null));
+
+    }
+
+
+    @Test
+    public void relationshipsCanBeRemovedById() {
+        ChangeInitiativeToMeasurableRelDao dao = ctx.getBean(ChangeInitiativeToMeasurableRelDao.class);
+
+        Long relId = dao.createRelationship(
+                mkRel(ciId, measurableId, rk1Id),
+                "testUser");
+
+        assertEquals(1, findByChangeInitiativeId(dao, ciId).size());
+
+        dao.removeRelationship(relId, "admin");
+
+        assertTrue(findByChangeInitiativeId(dao, ciId).isEmpty());
+
+    }
+
+
+    @Test
+    public void cannotRemoveReadOnlyRelationship() {
+        ChangeInitiativeToMeasurableRelDao dao = ctx.getBean(ChangeInitiativeToMeasurableRelDao.class);
+
+        Long relId = dao.createRelationship(
+                mkRel(ciId, measurableId, roRkId),
+                "testUser");
+
+        assertEquals(1, findByChangeInitiativeId(dao, ciId).size());
+
+        int rc = dao.removeRelationship(relId, "admin");
+
+        assertEquals("expected return code to be zero when attempting to remove a read-only relationship", 0, rc);
+        assertEquals(1, findByChangeInitiativeId(dao, ciId).size());
+
+    }
+
+
     // -- HELPERS ---
 
-    private CreateRelationshipCommand mkRel(long idA, long idB, long rkId) {
+    private CreateRelationshipCommand mkRel(long idA,
+                                            long idB,
+                                            long rkId) {
         return ImmutableCreateRelationshipCommand
                     .builder()
                     .idA(idA)
@@ -131,10 +199,23 @@ public class ChangeInitiativeToMeasurableDaoTest extends BaseIntegrationTest {
                 mkRef(EntityKind.CHANGE_INITIATIVE, id),
                 HierarchyQueryScope.EXACT);
 
-        ChangeInitiativeIdSelectorFactory ciSelectorFactory = new ChangeInitiativeIdSelectorFactory();
-        Select<Record1<Long>> ciSelector = ciSelectorFactory.apply(selectionOptions);
+        ChangeInitiativeIdSelectorFactory selectorFactory = new ChangeInitiativeIdSelectorFactory();
+        Select<Record1<Long>> ciSelector = selectorFactory.apply(selectionOptions);
 
         return dao.findForChangeInitiativeSelector(ciSelector);
+    }
+
+
+    private Set<ChangeInitiativeToMeasurableRel> findByMeasurableId(ChangeInitiativeToMeasurableRelDao dao,
+                                                                    long id) {
+        IdSelectionOptions selectionOptions = mkOpts(
+                mkRef(EntityKind.MEASURABLE, id),
+                HierarchyQueryScope.EXACT);
+
+        MeasurableIdSelectorFactory selectorFactory = new MeasurableIdSelectorFactory();
+        Select<Record1<Long>> mSelector = selectorFactory.apply(selectionOptions);
+
+        return dao.findForMeasurableSelector(mSelector);
     }
 
 }

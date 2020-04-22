@@ -25,12 +25,14 @@ import com.khartec.waltz.model.rel.CreateRelationshipCommand;
 import com.khartec.waltz.model.rel.ImmutableChangeInitiativeToMeasurableRel;
 import com.khartec.waltz.schema.tables.records.ChangeInitiativeToMeasurableRecord;
 import org.jooq.*;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.Set;
 
 import static com.khartec.waltz.schema.Tables.CHANGE_INITIATIVE_TO_MEASURABLE;
+import static com.khartec.waltz.schema.Tables.RELATIONSHIP_KIND;
 
 @Repository
 public class ChangeInitiativeToMeasurableRelDao {
@@ -99,5 +101,33 @@ public class ChangeInitiativeToMeasurableRelDao {
 
         record.store();
         return record.getId();
+    }
+
+
+    public int removeRelationship(Long relId, String user) {
+        Field<Boolean> readOnlySelector = DSL.select(RELATIONSHIP_KIND.IS_READONLY)
+                .from(RELATIONSHIP_KIND)
+                .innerJoin(CHANGE_INITIATIVE_TO_MEASURABLE)
+                .on(CHANGE_INITIATIVE_TO_MEASURABLE.RELATIONSHIP_ID.eq(RELATIONSHIP_KIND.ID))
+                .where(CHANGE_INITIATIVE_TO_MEASURABLE.ID.eq(relId))
+                .asField();
+
+        return dsl
+                .deleteFrom(CHANGE_INITIATIVE_TO_MEASURABLE)
+                .where(CHANGE_INITIATIVE_TO_MEASURABLE.ID.eq(relId))
+                .andNot(readOnlySelector)
+                .execute();
+    }
+
+
+    public int updateDescription(Long relId, String newDesc, String userId) {
+        return dsl
+                .update(CHANGE_INITIATIVE_TO_MEASURABLE)
+                .set(CHANGE_INITIATIVE_TO_MEASURABLE.DESCRIPTION, newDesc)
+                .set(CHANGE_INITIATIVE_TO_MEASURABLE.LAST_UPDATED_BY, userId)
+                .set(CHANGE_INITIATIVE_TO_MEASURABLE.LAST_UPDATED_AT, DateTimeUtilities.nowUtcTimestamp())
+                .where(CHANGE_INITIATIVE_TO_MEASURABLE.ID.eq(relId))
+                .execute();
+
     }
 }

@@ -25,14 +25,21 @@ These two requirements may not be easily met within corporate environments, henc
  configured.
  
  
- ## Running the tests
+## Running the tests
  
- To run the tests ensure the `ci` maven profile is selected and either run
- the tests from the maven command line or re-import your maven config into your 
- IDE and run the tests from their.
+To run the tests ensure the `ci` maven profile is selected and either run
+the tests from the maven command line or re-import your maven config into your 
+IDE and run the tests from their.
  
- Running the tests uses the standard way for executing unit tests.  The tests _will_
- take longer than typical tests, especially on the first run when Docker images
- are downloaded.
+Running the tests uses the standard way for executing unit tests.  The tests _will_
+take longer than typical tests, especially on the first run when downloading Docker 
+images.
  
-  
+ 
+## Writing Tests
+
+Adding integration tests is simple.  Simply extend the `BaseIntegrationTest` class 
+and write your JUnit test as normal.  Each test class gets a fresh database and there are 
+numerous helper methods in the base class to help prepare the data your tests need.
+
+The package structure should follow the general pattern in the `waltz-data` project. 

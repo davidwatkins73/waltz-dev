@@ -165,6 +165,11 @@ public class BaseIntegrationTest {
 
 
     protected long createRelationshipKind(String name, EntityKind kindA, EntityKind kindB) {
+        return createRelationshipKind(name, kindA, kindB, false);
+    }
+
+
+    protected long createRelationshipKind(String name, EntityKind kindA, EntityKind kindB, boolean isReadOnly) {
         return getDsl()
                 .select(RELATIONSHIP_KIND.ID)
                 .from(RELATIONSHIP_KIND)
@@ -176,7 +181,7 @@ public class BaseIntegrationTest {
                     record.setKindB(kindB.name());
                     record.setName(name);
                     record.setDescription(name);
-
+                    record.setIsReadonly(isReadOnly);
                     record.store();
                     return record.getId();
                 });
