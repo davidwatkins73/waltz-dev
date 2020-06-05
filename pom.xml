@@ -81,7 +81,7 @@
         <jooq.version>3.12.3</jooq.version> <!--If this changes see issue #4553 -->
         <junit.version>4.12</junit.version>
         <jwt.version>3.8.3</jwt.version>
-        <liquibase.maven.version>3.5.1</liquibase.maven.version>
+        <liquibase.maven.version>3.9.0</liquibase.maven.version>
         <logback.version>1.2.3</logback.version>
         <pcollections.version>2.1.2</pcollections.version>
         <poi.version>4.1.1</poi.version>
