@@ -14,7 +14,9 @@
     "build-debug": "webpack --config webpack.dev.js --progress --profile --colors",
     "watch": "webpack --progress --watch --colors",
     "start-dev": "node lib/server-development",
-    "start": "node lib/server-production"
+    "start": "node lib/server-production",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "@uirouter/angularjs": "^1.0.20",
@@ -58,7 +60,8 @@
     "ng-tags-input": "3.2.0",
     "satellizer": "0.15.5",
     "ui-select": "0.19.8",
-    "xlsx": "0.11.13"
+    "xlsx": "0.11.13",
+    "snyk": "^1.316.1"
   },
   "devDependencies": {
     "babel-cli": "^6.0.0",
@@ -90,5 +93,6 @@
     "webpack-visualizer-plugin": "^0.1.11"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "snyk": true
 }
