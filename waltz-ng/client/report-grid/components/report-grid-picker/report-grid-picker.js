@@ -4,7 +4,8 @@ import {CORE_API} from "../../../common/services/core-api-utils";
 
 const bindings = {
     parentEntityRef: "<",
-    onGridSelect: "<"
+    onGridSelect: "<",
+    onRoadmapSelect: "<"
 };
 
 const initData = {
@@ -20,11 +21,14 @@ function controller(serviceBroker) {
             .then(r => vm.grids = r.data);
     };
 
-    vm.onSelect = (grid) => {
+    vm.onSelectGrid = (grid) => {
         vm.selectedGridId = grid.id;
         vm.onGridSelect(grid);
+    };
 
-    }
+    vm.onSelectRoadmap = () => {
+        vm.onRoadmapSelect();
+    };
 
 }
 

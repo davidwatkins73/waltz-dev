@@ -31,12 +31,26 @@ function controller(serviceBroker, localStorageService) {
                         vm.showPicker = true;
                     }
                 })
+                .then(() => {
+                    // HACK
+                    vm.selectedGrid = null;
+                    vm.onRoadmapSelect();
+                    // END HACK
+                });
         }
+
     };
 
     vm.onGridSelect = (grid) => {
         localStorageService.set(localStorageKey, grid.id);
         vm.selectedGrid = grid;
+        vm.selectedRoadmap = null;
+        vm.showPicker = false;
+    };
+
+    vm.onRoadmapSelect = (grid) => {
+        vm.selectedGrid = null;
+        vm.selectedRoadmap = {foo: "baa"};
         vm.showPicker = false;
     };
 }

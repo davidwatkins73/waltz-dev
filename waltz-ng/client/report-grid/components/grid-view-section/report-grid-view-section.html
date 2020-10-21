@@ -18,7 +18,8 @@
             <waltz-sub-section name="Report picker">
                 <content>
                     <div class="waltz-sub-section-content">
-                        <waltz-report-grid-picker on-grid-select="$ctrl.onGridSelect">
+                        <waltz-report-grid-picker on-grid-select="$ctrl.onGridSelect"
+                                                  on-roadmap-select="$ctrl.onRoadmapSelect">
                         </waltz-report-grid-picker>
                     </div>
                     <div class="waltz-sub-section-controls"
@@ -38,6 +39,12 @@
         <waltz-report-grid-view-panel parent-entity-ref="$ctrl.parentEntityRef"
                                       grid-id="$ctrl.selectedGrid.id">
         </waltz-report-grid-view-panel>
+    </div>
+
+    <!-- GRID & FILTERS -->
+    <div ng-if="$ctrl.selectedRoadmap">
+        <waltz-grid-roadmap-view-panel parent-entity-ref="$ctrl.parentEntityRef">
+        </waltz-grid-roadmap-view-panel>
     </div>
 </div>
 
