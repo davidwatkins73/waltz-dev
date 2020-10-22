@@ -50,7 +50,7 @@ function controller($q, serviceBroker) {
 
         $q.all([appPromise, categoriesPromise])
             .then(([apps, categories]) => {
-                redrawFn = draw("#viz", mkData(apps), categories);
+                redrawFn = draw("#viz", mkData(apps, categories), categories);
             });
 
         global.vm = vm;
@@ -73,7 +73,7 @@ function controller($q, serviceBroker) {
     };
 
     document.getElementById("kill").onclick = () => {
-        dynPropFn = d => ({isRemoved: d.app.name.startsWith("p")});
+        dynPropFn = d => ({isRemoved: d.app.name.startsWith("T")});
         redraw();
     };
 

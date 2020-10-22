@@ -1,4 +1,3 @@
-import {mkName} from "./names";
 import {getRandomDate, randomPick} from "./utils";
 
 let ctr = 0;
@@ -14,50 +13,6 @@ function mkDate(phase) {
     return approx;
 
 }
-
-
-export const categories = {
-    liftAndShift: {
-        id: ctr++,
-        name: "Lift & Shift",
-        position: 10
-    },
-    // tweak: {
-    //     id: ctr++,
-    //     name: "Tweak",
-    //     position: 15
-    // },
-    easyRefactor: {
-        id: ctr++,
-        name: "Refactor",
-        position: 20
-    },
-    // rework: {
-    //     id: ctr++,
-    //     name: "Rework",
-    //     position: 25
-    // },
-    hardRefactor: {
-        id: ctr++,
-        name: "Hard Refactor",
-        position: 30
-    },
-    replatform: {
-        id: ctr++,
-        name: "Replatform",
-        position: 40
-    },
-    // repurchase: {
-    //     id: ctr++,
-    //     name: "Repurchase",
-    //     position: 50
-    // },
-    // retire: {
-    //     id: ctr++,
-    //     name: "Retire",
-    //     position: 60
-    // },
-};
 
 
 const phases = {
@@ -85,41 +40,22 @@ const mkMilestone= (category, phase, name="foo") => ({
 })
 
 const examplePaths = [
-    () => [ mkMilestone(categories.liftAndShift, phases.p1) ],
-    () => [ mkMilestone(categories.liftAndShift, phases.p1), mkMilestone(categories.easyRefactor, phases.p2), mkMilestone(categories.replatform, phases.p3)],
-    () => [ mkMilestone(categories.liftAndShift, phases.p1), mkMilestone(categories.easyRefactor, phases.p2), mkMilestone(categories.replatform, phases.p3)],
-    () => [ mkMilestone(categories.liftAndShift, phases.p1), mkMilestone(categories.easyRefactor, phases.p2), mkMilestone(categories.replatform, phases.p3)],
-    () => [ mkMilestone(categories.liftAndShift, phases.p1) ],
-    () => [ mkMilestone(categories.liftAndShift, phases.p2) ],
-    () => [ mkMilestone(categories.liftAndShift, phases.p2) ],
-    () => [ mkMilestone(categories.liftAndShift, phases.p1), mkMilestone(categories.hardRefactor, phases.p2) ],
-    () => [ mkMilestone(categories.liftAndShift, phases.p1), mkMilestone(categories.replatform, phases.p3) ],
-    () => [ mkMilestone(categories.easyRefactor, phases.p2), mkMilestone(categories.replatform, phases.p3) ],
-    () => [ mkMilestone(categories.easyRefactor, phases.p1) ],
-    () => [ mkMilestone(categories.easyRefactor, phases.p1) ],
-    () => [ mkMilestone(categories.easyRefactor, phases.p2) ],
-    () => [ mkMilestone(categories.easyRefactor, phases.p2) ],
-    () => [ mkMilestone(categories.easyRefactor, phases.p3) ],
-    () => [ mkMilestone(categories.hardRefactor, phases.p1) ],
-    // () => [ mkMilestone(categories.tweak, phases.p1) ],
-    // () => [ mkMilestone(categories.tweak, phases.p2) ],
-    // () => [ mkMilestone(categories.rework, phases.p1) ],
-    // () => [ mkMilestone(categories.rework, phases.p2) ],
-    () => [ mkMilestone(categories.hardRefactor, phases.p2) ],
-    () => [ mkMilestone(categories.hardRefactor, phases.p3) ],
-    () => [ mkMilestone(categories.hardRefactor, phases.p3) ],
-    // () => [ mkMilestone(categories.repurchase, phases.p2) ],
-    // () => [ mkMilestone(categories.repurchase, phases.p3) ],
-    () => [ mkMilestone(categories.replatform, phases.p2) ],
-    () => [ mkMilestone(categories.replatform, phases.p3) ],
-    () => [ mkMilestone(categories.replatform, phases.p3) ],
-    // () => [ mkMilestone(categories.retire, phases.p1) ]
+    (xs) => [ mkMilestone(randomPick(xs), phases.p1) ],
+    (xs) => [ mkMilestone(randomPick(xs), phases.p1) ],
+    (xs) => [ mkMilestone(randomPick(xs), phases.p1), mkMilestone(randomPick(xs), phases.p2), mkMilestone(randomPick(xs), phases.p3)],
+    (xs) => [ mkMilestone(randomPick(xs), phases.p1), mkMilestone(randomPick(xs), phases.p3)],
+    (xs) => [ mkMilestone(randomPick(xs), phases.p1), mkMilestone(randomPick(xs), phases.p3)],
+    (xs) => [ mkMilestone(randomPick(xs), phases.p2), mkMilestone(randomPick(xs), phases.p3)],
+    (xs) => [ mkMilestone(randomPick(xs), phases.p1), mkMilestone(randomPick(xs), phases.p2)],
+    (xs) => [ mkMilestone(randomPick(xs), phases.p2)],
+    (xs) => [ mkMilestone(randomPick(xs), phases.p2)],
+    (xs) => [ mkMilestone(randomPick(xs), phases.p3)],
 ];
 
 
-export function mkData(apps = []) {
+export function mkData(apps = [], categories = []) {
     return _.map(apps, app => ({
         app: Object.assign(app, { size: Math.ceil(Math.random() * 12) }),
-        milestones: randomPick(examplePaths)()
+        milestones: randomPick(examplePaths)(categories)
     }));
 }

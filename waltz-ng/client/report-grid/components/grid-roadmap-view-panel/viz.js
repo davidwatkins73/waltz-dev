@@ -51,7 +51,7 @@ function showTooltip(tooltip, d, x, y) {
         .html(`
             <b>${d.app.name}</b>
             <p>
-                ${d.milestone.category.name} 
+                ${d.milestone.category.name}
                 -
                 ${timeFormat("%-m/%-d/%Y")(d.milestone.date)}
             </p>
@@ -74,11 +74,15 @@ function hideTooltip(tooltip) {
 }
 
 
-function drawNodeRemovalGlyph(newNodes, allNodes) {
-
+function drawNodeRemovalGlyph(allNodes) {
     const crossPath = symbol().type(symbolCross).size(100);
 
-    newNodes
+    const crosses = allNodes
+        .selectAll(`path.${classes.removalGlyph}`)
+        .data(x => _.get(x, ["dynProps", "isRemoved"], false) ? [x.index] : [], d => d);
+
+    const newCrosses = crosses
+        .enter()
         .append("path")
         .classed(classes.removalGlyph, true)
         .style("transform", "rotate(0deg) scale(0)")
@@ -86,27 +90,25 @@ function drawNodeRemovalGlyph(newNodes, allNodes) {
         .attr("stroke", "white")
         .attr("fill", "red")
         .attr("opacity", 0.9)
-        .attr("visibility", "hidden");
-
-    allNodes
-        .select(`path.${classes.removalGlyph}`)
-        .filter(d => _.get(d, ["dynProps", "isRemoved"], false))
-        .attr("visibility", "visible")
         .transition(transition()
             .ease(easeCubic)
             .duration(ANIMATION_DURATION * 2))
         .style("transform", "rotate(45deg) scale(1.5)");
 
-    allNodes
-        .select(`path.${classes.removalGlyph}`)
-        .filter(d => ! _.get(d, ["dynProps", "isRemoved"], false))
+    crosses
+        .exit()
+        .transition(transition()
+            .ease(easeCubic)
+            .duration(ANIMATION_DURATION * 2))
         .style("transform", "rotate(0deg) scale(0)")
-        .attr("visibility", "hidden")
-
+        .remove();
 }
 
 
-function drawNodes(scales, containers, nodeData = [], allArcs) {
+function drawNodes(scales,
+                   containers,
+                   nodeData = [],
+                   allArcs) {
     const nodes = containers.nodes
         .selectAll(`g.${classes.node}`)
         .data(nodeData, d => `${d.app.id}_${d.milestone.id}`);
@@ -156,7 +158,7 @@ function drawNodes(scales, containers, nodeData = [], allArcs) {
             .duration(ANIMATION_DURATION))
         .attr("r", d => scales.nodeSize(d.app.size));
 
-    drawNodeRemovalGlyph(newNodes, allNodes);
+    drawNodeRemovalGlyph(allNodes);
 
     return allNodes;
 }
@@ -196,7 +198,7 @@ function drawArcs(scales,
 }
 
 
-function setupContainers(elemSelector = '#viz') {
+function setupContainers(elemSelector = "#viz") {
     const svg = select(elemSelector)
         .append("svg")
         .attr("width", dimensions.w)
@@ -273,8 +275,8 @@ function mkScaleNodeSize(data) {
 }
 
 
- function mkScales(rawData,
-                   categories) {
+function mkScales(rawData,
+                  categories) {
     return {
         x: mkScaleX(rawData),
         y: mkScaleY(categories),
