@@ -1,0 +1,128 @@
+= Data Quality Challenges
+David Watkins <david.watkins@db.com>
+:version: v0.1
+:modified: 2020
+:status: DRAFT
+:toc:
+
+<<<
+== Document Info
+
+|===
+| Attribute | Value
+
+| Status
+| {status} {version} ({modified})
+
+| Target Version
+| 1.30 ?
+
+| Lead
+| Dave Watkins
+|===
+
+<<<
+
+== Overview
+
+This paper discusses approaches to data quality within the Waltz application.
+It is proposed that Waltz allows for Data Quality _Challenges_ to be registered and assigned to users.
+Recipients will be notified of new/outstanding challenges and the status of challenges can be tracked.
+
+[NOTE]
+====
+Is the mechanism described here applicable for purposes other than reporting Data Quality Issues ?
+====
+
+<<<
+
+=== Data Quality Challenges
+
+This section will discuss how challenges are registered into Waltz and will not discuss the actual challenges raised.
+In general challenges will be:
+
+* Raised against specific entities in Waltz (i.e. _Applications_, _Measurables_, _Servers_).
+  Some challenges may be linked to several entities (e.g. a _data flow_ challenge may be linked to the _flow_, the _source_ and the _target_).
+* Have a specific category (e.g. _Missing Flow_, _Incorrect Data Type_, _Data Inconsistency_) used for classification and reporting.
+* Assigned to one or more _recipients_ (owners).
+  This will most likely be done on a role/involvement basis rather than expecting users to know which user/s to raise the challenge against.
+  Some categories may have predefined owners, for example queries over data sourced externally may direct the user to the source system.
+* Tracked by one or more _status_ fields.
+  A basic lifecycle is envisaged with states such as `Open|Accepted|Closed|Rejected`
+* Challenges will include user provided comment.
+
+[NOTE]
+====
+Waltz may not offer the challenge functionality for all data entities.
+For example, _Asset Cost Data_ is commonly sourced from external systems and there may be no meaningful resolution that recipients could initiate.
+====
+
+
+==== Manual challenge
+Manual challenges will be raised directly by users of Waltz via the user interface.
+The section menu bar would contain a dual-purpose button:
+
+image::section-button.png[Section Button]
+
+The button would be used to raise new data quality challenges and also be used to indicate that a section has data quality challenges registered against it.
+
+[NOTE]
+====
+The colouring could be used to distinguish when data quality challenges are present.
+Colouring could change if the logged-in user is the assignee.
+====
+
+When raising a data quality challenge the user will be guided to:
+
+* select a category which is applicable for the section
+* pick assignee/s based on role if applicable for the category/section
+* enter a description
+
+
+==== Automated challenge
+
+It is envisaged that many challenges will be raised by automated Data Quality Checks.
+The checks themselves are outside the scope of this documents, however examples may include:
+
+* Missing bookmarks
+** _all custom/in-house software should have a source code repository_
+* Inconsistent Data Flows
+** _the app performs the business function, 'Settlements', but has no corresponding data flows_
+
+Raising of these challenges would likely be via a batch process if the calculation is expensive.
+Alternatively the challenge may be dynamically created if the calculation is simple (i.e. the bookmark example).
+If the challenge is raised by batch then there may be a lag between a user resolving the issue and the issue being cleared.
+
+
+==== One-off bulk challenges
+
+Similar to batch, but done as a one-off fire drill.
+
+
+==== Dealing with recurring (false positive) challenges
+
+With automated challenge creation there it is likely some challenges will be incorrectly created.
+Therefore it should be possible for a recipient to 'ignore' a challenge.
+
+
+<<<
+
+== Presentation
+
+This section briefly discusses how challenges would be presented to owners and how new challenges could be issued.
+
+=== Homepage
+
+On the homepage the users with challenges assigned to them will be notified they have outstanding items.
+footnote:[See `outstanding-actions-notification-panel.js`]
+This mechanism will be aligned with the outstanding attestations and surveys functionality.
+footnote:[See `com.khartec.waltz.web.endpoints.api.NotificationEndpoint`]
+
+image::homepage.png[Homepage Mockup]
+
+[NOTE]
+====
+Should this indicator be enhanced to indicate the number of open challenges raised by the user?
+This would somewhat diminish the notion that the boxes represent actions that need to be performed.
+====
+
