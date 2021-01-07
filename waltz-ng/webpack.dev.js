@@ -40,5 +40,5 @@ module.exports = smp.wrap(merge(common, {
 
 /*
 [1] - accessing the server using localhost in a browser seems to incur a significant proxy performance cost
-      this can be mitigated by using loopback address (seen here specified in ipv6 form)
+      this can be mitigated by using loopback (e.g. 127.0.0.1) address (seen here specified in ipv6 form)
  */
