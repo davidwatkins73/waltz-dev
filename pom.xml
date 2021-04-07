@@ -85,7 +85,7 @@
         <liquibase.maven.version>3.5.1</liquibase.maven.version>
         <logback.version>1.2.3</logback.version>
         <pcollections.version>3.1.4</pcollections.version>
-        <poi.version>4.1.2</poi.version>
+        <poi.version>5.0.0</poi.version>
         <slf4j.version>1.7.30</slf4j.version>
         <spark.version>2.9.3</spark.version>
         <spring.version>5.3.5</spring.version>
