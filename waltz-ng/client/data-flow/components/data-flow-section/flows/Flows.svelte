@@ -17,7 +17,7 @@
 
     import {mkDataSet} from "./data";
 
-    export let data = mkDataSet({sourceCount: 100, targetCount: 250});
+    export let data;
 
     const hierStackFn = hierarchyStack();
     const indicatorBarWidth = tweened(18, {duration: 400, easing: cubicInOut});
@@ -111,16 +111,20 @@
     $: inArcs = mkArcs(layoutData.in, arcFn);
     $: outArcs = mkArcs(layoutData.out, arcFn);
 
-    $: console.log({
+    $: true || console.log({
         activeRoot: $activeRoot,
+        inArcs,
+        outArcs
+    });
+
+    $: console.log({
         data,
-        inFacet, outFacet,
-        facetDomain,
-        selectedFacet: $selectedFacet,
         inData,
         outData,
-        inArcs,
-        outArcs,
+        inFacet,
+        outFacet,
+        facetDomain,
+        selectedFacet: $selectedFacet,
         activeDomainItems,
         flowsById
     });

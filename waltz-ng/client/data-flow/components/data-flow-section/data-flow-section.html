@@ -247,6 +247,7 @@
         <div class="wt-tab wt-active"
              ng-if="$ctrl.activeTab.id === 'BETA'">
             <waltz-svelte-component component="$ctrl.DataFlowsSummary"
+                                    logical-flow-decorators="$ctrl.logicalFlowDecorators"
                                     logical-flows="$ctrl.logicalFlows">
             </waltz-svelte-component>
         </div>
