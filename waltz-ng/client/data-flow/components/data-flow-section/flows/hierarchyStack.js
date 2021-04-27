@@ -22,15 +22,19 @@ export function hierarchyStack() {
             data,
             d => datumIdToParentIdMap[valueId(d)]);
 
+        console.log("hs", {data, parents, datumIdToParentIdMap, groupedByParentId});
+
         return _
             .chain(parents)
             .map(p => ({
                 k: parentId(p),
-                values: groupedByParentId[parentId(p)],
+                values: groupedByParentId[parentId(p)] || [],
                 parent: p
             }))
+            .filter(d => d.values.length > 0)
             .reduce(
                 (acc, d) => {
+                    console.log("red", {acc, d});
                     const r = {...d, y: acc.total, h: d.values.length };
                     acc.values.push(r);
                     acc.total += d.values.length;

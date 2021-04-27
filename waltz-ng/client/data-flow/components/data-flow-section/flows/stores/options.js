@@ -1,8 +1,6 @@
 import {writable} from "svelte/store";
 import _ from "lodash";
 
-export const selectedFacet = writable("type");
-
 export const history = writable([]);
 
 export const showBreadcrumbs = writable(true);

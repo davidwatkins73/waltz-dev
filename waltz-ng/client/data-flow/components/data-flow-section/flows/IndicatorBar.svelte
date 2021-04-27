@@ -8,7 +8,7 @@
     export let data = {};
 
     const color = scaleOrdinal()
-        .domain(["R", "A", "G", "Z"])
+        .domain(["DISCOURAGED", "SECONDARY", "PRIMARY", "NO_OPINION"])
         .range(["#e79d9d", "#e7d49a", "#a8e29e", "#aaa"]);
 
     $: stackData = stack()

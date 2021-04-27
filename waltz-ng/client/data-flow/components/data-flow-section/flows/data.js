@@ -21,7 +21,7 @@ const names3 = [
 
 
 const dataTypes = [
-    {"name":"Book Data","id":1000, "parentId":null},
+    {"name":"Booky Data","id":1000, "parentId":null},
     {"name":"Counterparty etc.","id":2000, "parentId":null},
         {"name":"Institutional","id":2100, "parentId":2000},
             {"name":"Commercial","id":2110, "parentId":2100},
@@ -30,17 +30,17 @@ const dataTypes = [
             {"name":"Government","id":2120, "parentId":2100},
             {"name":"NGO","id":2130, "parentId":2100},
         {"name":"Individual","id":2200, "parentId":2000},
-    {"name":"Pricing Data","id":3000, "parentId":null},
+    {"name":"Pricing Datay","id":3000, "parentId":null},
         {name: "Commodities", id: 3100, parentId: 3000 },
         {name: "Equities", id: 3200, parentId: 3000 },
         {name: "Fixed", id: 3300, parentId: 3000 },
     {"name":"Transactions etc.","id":4000,"parentId":null},
-    {"name":"Interest rates etc","id":5000,"parentId":null},
+    {"name":"Interesty rates etc","id":5000,"parentId":null},
     {"name":"Currencies etc","id":6000,"parentId":null},
         {"name":"Virtual Currencies","id":6100,"parentId":6000},
             {"name":"Bitcoin","id":6110,"parentId":6100},
             {"name":"Ethereum","id":6112,"parentId":6100},
-    {"name":"Unknown","id":1,"parentId":null}
+    {"name":"Unknowny","id":1,"parentId":null}
 ];
 
 
@@ -119,9 +119,8 @@ function mkFlows(sources, targets) {
 }
 
 
-function mkFacets(flows = []) {
-
-    const dtMappings = _
+function mkFacet(flows = []) {
+    return _
         .chain(flows)
         .flatMap(d => repeat(
             Math.ceil(Math.random() * 3),
@@ -130,26 +129,13 @@ function mkFacets(flows = []) {
                 ref: randomPick(dataTypes).id
             })))
         .value();
-
-    const transportMappings = _
-        .chain(flows)
-        .map(d => ({
-            flowId: d.id,
-            ref: randomPick(transports).id
-        }))
-        .value();
-
-    return [
-        { id: "type", values: dtMappings },
-        { id: "transport", values: transportMappings },
-    ]
 }
 
 
 function mkFlowsAndFacets(flows) {
     return {
         flows,
-        facets: mkFacets(flows)
+        facet: mkFacet(flows)
     };
 }
 
@@ -171,14 +157,10 @@ export function mkDataSet(config) {
     return {
         sources,
         targets,
-        app,
         inbound,
         outbound,
-        facetDomains: [
-            { id: "type", values: dataTypes, name: "Data Transports" },
-            { id: "transport", values: transports, name: "Data Types" }
-        ]
-    }
+        // domain: dataTypes
+    };
 }
 
 

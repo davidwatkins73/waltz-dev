@@ -9,17 +9,16 @@
     import DomainBar from "./DomainBar.svelte";
     import Breadcrumbs from "./Breadcrumbs.svelte";
 
-    import {selectedFacet, history, showBreadcrumbs, activeRoot, drillIn} from "./stores/options";
+    import {history, showBreadcrumbs, activeRoot, drillIn} from "./stores/options";
 
     import {hierarchyStack} from "./hierarchyStack";
     import {flowLayout} from "./flowLayout";
     import {arc, mkArcs} from "./arcs";
 
-    import {mkDataSet} from "./data";
 
     export let data;
 
-    const hierStackFn = hierarchyStack();
+    const hierStackFn = hierarchyStack().valueId(d => d.dataTypeId);
     const indicatorBarWidth = tweened(18, {duration: 400, easing: cubicInOut});
 
     function expandIndicatorBar() {
@@ -33,8 +32,7 @@
     function mkIndicatorData(data) {
         return _
             .chain(data.values)
-            .map(d => flowsById[d.flowId])
-            .countBy(d => d.authorityRating)
+            .countBy(d => d.rating)
             .value()
     }
 
@@ -70,12 +68,10 @@
     $: {
         const root = {id: -1, name: "Root"};
         const domain = _.map(
-            facetDomain.values,
+            facetDomain,
             d => ({
                 ...d,
-                parentId: d.parentId
-                    ? d.parentId
-                    : root.id
+                parentId: d.parentId || root.id
             }));
 
         domainTree = stratify()(_.concat([root], domain));
@@ -100,43 +96,32 @@
         .keyBy(d => d.id)
         .value();
 
-    $: inFacet = _.find(data.inbound.facets, {id: $selectedFacet});
-    $: outFacet = _.find(data.outbound.facets, {id: $selectedFacet});
-    $: facetDomain = _.find(data.facetDomains, {id: $selectedFacet});
-    $: inData = hierStackFn(inFacet.values, activeDomainItems);
-    $: outData = hierStackFn(outFacet.values, activeDomainItems);
+    $: inFacet = data.inbound.facet;
+    $: outFacet = data.outbound.facet;
+    $: facetDomain = data.domain;
+    $: inData = hierStackFn(inFacet, activeDomainItems);
+    $: outData = hierStackFn(outFacet, activeDomainItems);
     $: layoutData = layoutFn(inData, outData, activeDomainItems);
 
     $: mids = layoutData.mid;
     $: inArcs = mkArcs(layoutData.in, arcFn);
     $: outArcs = mkArcs(layoutData.out, arcFn);
 
-    $: true || console.log({
-        activeRoot: $activeRoot,
-        inArcs,
-        outArcs
-    });
-
     $: console.log({
         data,
-        inData,
-        outData,
         inFacet,
         outFacet,
+        // inData,
         facetDomain,
-        selectedFacet: $selectedFacet,
         activeDomainItems,
-        flowsById
     });
 
 </script>
 
-<h1>Flows</h1>
 
 <svg viewBox="0 0 {width} {height}"
      width="100%"
-     bind:this={el}
-     style="border: 1px solid #eee">
+     bind:this={el}>
     <Defs/>
     {#if $showBreadcrumbs}
         <Breadcrumbs/>
