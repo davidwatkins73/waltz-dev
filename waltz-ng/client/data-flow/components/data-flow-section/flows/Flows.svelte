@@ -14,6 +14,7 @@
     import {hierarchyStack} from "./hierarchyStack";
     import {flowLayout} from "./flowLayout";
     import {arc, mkArcs} from "./arcs";
+    import {calcOnlyUsedDomainItems, peek} from "./flow-utils";
 
 
     export let data;
@@ -89,7 +90,6 @@
         .orderBy(d => d.data.name)
         .value();
 
-
     $: flowsById = _
         .chain([])
         .concat(data.inbound.flows, data.outbound.flows)
@@ -101,20 +101,14 @@
     $: facetDomain = data.domain;
     $: inData = hierStackFn(inFacet, activeDomainItems);
     $: outData = hierStackFn(outFacet, activeDomainItems);
-    $: layoutData = layoutFn(inData, outData, activeDomainItems);
+    $: layoutData = layoutFn(
+        inData,
+        outData,
+        calcOnlyUsedDomainItems(activeDomainItems, inData, outData));
 
     $: mids = layoutData.mid;
     $: inArcs = mkArcs(layoutData.in, arcFn);
     $: outArcs = mkArcs(layoutData.out, arcFn);
-
-    $: console.log({
-        data,
-        inFacet,
-        outFacet,
-        // inData,
-        facetDomain,
-        activeDomainItems,
-    });
 
 </script>
 
