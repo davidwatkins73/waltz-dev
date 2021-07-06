@@ -24,6 +24,7 @@ import {mkSelectionOptions} from "../../../common/selector-utils";
 
 import template from "./data-flow-section.html";
 import {entity} from "../../../common/services/enums/entity";
+import DataFlowsSummary from "./DataFlowsSummary.svelte";
 
 
 const bindings = {
@@ -40,15 +41,20 @@ const initialState = {
     physicalSpecifications: [],
     tags: [],
     visibility: {
-        dataTab: 0,
         logicalFlows: false, // this is the source data ratings panel, rename
         editor: {
             logicalFlows: false,
             bulkLogicalFlows: false,
             bulkPhysicalFlows: false
         }
-
-    }
+    },
+    DataFlowsSummary,
+    tabs: [
+        {id: "SUMMARY", name: "Summary"},
+        {id: "PHYSICAL", name: "Physical Flow Detail"},
+        {id: "AUTHORITY", name: "Authority"},
+        {id: "BETA", name: "New Beta view"},
+    ]
 };
 
 
@@ -137,13 +143,7 @@ function controller(serviceBroker) {
 
     vm.$onInit = () => {
         loadData();
-    };
-
-    vm.showTab = (idx) => {
-        vm.visibility.dataTab = idx;
-        if (idx === 2) {
-            loadAdditionalAuthSourceData();
-        }
+        vm.activeTab = vm.tabs[0];
     };
 
     vm.isAnyEditorVisible = () => {
