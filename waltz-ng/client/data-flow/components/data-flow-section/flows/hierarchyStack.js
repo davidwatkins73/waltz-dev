@@ -6,7 +6,7 @@ export function hierarchyStack() {
     let parentId = d => d.id;
     let descendants = d => d.rollups;
 
-    function compute(data, parents) {
+    function compute(data, parents, direction) {
         const datumIdToParentIdMap = _.reduce(
             parents,
             (acc, d) => {
@@ -22,12 +22,13 @@ export function hierarchyStack() {
             data,
             d => datumIdToParentIdMap[valueId(d)]);
 
-        const out = _
+        return _
             .chain(parents)
             .map(p => ({
                 k: parentId(p),
+                direction,
                 values: groupedByParentId[parentId(p)] || [],
-                parent: p
+                model: p
             }))
             .filter(d => d.values.length > 0)
             .reduce(
@@ -39,8 +40,6 @@ export function hierarchyStack() {
                 },
                 {total: 0, values: []})
             .value();
-
-        return out;
     }
 
 

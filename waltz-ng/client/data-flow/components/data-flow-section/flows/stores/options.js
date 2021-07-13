@@ -7,6 +7,7 @@ export const showBreadcrumbs = writable(true);
 
 export const activeRoot = writable(null);
 
+export const activeSelection = writable(null);
 
 // -- functions ----
 

@@ -9,7 +9,7 @@
 
     const color = scaleOrdinal()
         .domain(["DISCOURAGED", "SECONDARY", "PRIMARY", "NO_OPINION"])
-        .range(["#e79d9d", "#e7d49a", "#a8e29e", "#aaa"]);
+        .range(["#e79d9d", "#e7d49a", "#a8e29e", "#c1c1c1"]);
 
     $: stackData = stack()
         .keys(color.domain())
@@ -48,10 +48,10 @@
               {width}
               height={y(d.height)}
               fill={color(d.key)}/>
-        {#if width > 50 && y(d.height) > 26}
+        {#if width > 30 && y(d.height) > 26}
             <text dy={y(d.y) + (y(d.height) / 2 + 8)}
-                  text-anchor="end"
-                  dx={width/2 + 10}
+                  text-anchor="middle"
+                  dx={width/2}
                   style="font-size: 20px">
                 {d.count}
             </text>

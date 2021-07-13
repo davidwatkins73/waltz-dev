@@ -57,10 +57,16 @@
 </script>
 
 <div class="row">
-    <div class="col-sm-7">
+    <div class="col-sm-6">
+        <div class="help-block">
+            This is an experimental view for showing data flows with a focus on movement of data classes rather
+            than showing individual applications.  You can drill-down into data types (indicated by a + after the
+            data type name) or click on the arcs to see contextual information.
+        </div>
+
         <Flows {data}/>
     </div>
-    <div class="col-sm-5">
+    <div class="col-sm-6">
         <h1>Detail Here</h1>
 
         <table class="table table-condensed">

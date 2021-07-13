@@ -1,34 +1,23 @@
 <script>
     import _ from "lodash";
     import {stratify} from "d3-hierarchy";
-    import {cubicInOut} from 'svelte/easing';
-    import {tweened} from 'svelte/motion';
 
     import Defs from "./Defs.svelte";
     import IndicatorBar from "./IndicatorBar.svelte";
     import DomainBar from "./DomainBar.svelte";
     import Breadcrumbs from "./Breadcrumbs.svelte";
 
-    import {history, showBreadcrumbs, activeRoot, drillIn} from "./stores/options";
+    import {activeSelection, history, activeRoot, drillIn, showBreadcrumbs} from "./stores/options";
 
     import {hierarchyStack} from "./hierarchyStack";
     import {flowLayout} from "./flowLayout";
     import {arc, mkArcs} from "./arcs";
-    import {calcOnlyUsedDomainItems, peek} from "./flow-utils";
-
+    import {calcOnlyUsedDomainItems} from "./flow-utils";
+    import {onMount} from "svelte";
 
     export let data;
 
     const hierStackFn = hierarchyStack().valueId(d => d.dataTypeId);
-    const indicatorBarWidth = tweened(18, {duration: 400, easing: cubicInOut});
-
-    function expandIndicatorBar() {
-        indicatorBarWidth.set(100);
-    }
-
-    function collapseIndicatorBar() {
-        indicatorBarWidth.set(18);
-    }
 
     function mkIndicatorData(data) {
         return _
@@ -40,10 +29,11 @@
     let el;
 
     // overall dimensions of the chart
-    let width = 1000;
-    let height = 1000;
+    let width = 900;
+    let height = 700;
 
     // these control the ui layout
+    let indicatorBarWidth = 40;
     let midPaddingOuter = 3.5;
     let midPaddingInner = 0.5;
     let endpointPadding = 12;
@@ -55,6 +45,7 @@
     let outArcs = [];
     let mids = [];
 
+    onMount(() => $history = [])
 
     $: layoutFn = flowLayout()
         .height(height)
@@ -63,7 +54,7 @@
         .endpointPadding(endpointPadding);
 
     $: arcFn = arc()
-        .width(width / 3 - $indicatorBarWidth)
+        .width(width / 3 - indicatorBarWidth)
         .tension(tension);
 
     $: {
@@ -99,8 +90,8 @@
     $: inFacet = data.inbound.facet;
     $: outFacet = data.outbound.facet;
     $: facetDomain = data.domain;
-    $: inData = hierStackFn(inFacet, activeDomainItems);
-    $: outData = hierStackFn(outFacet, activeDomainItems);
+    $: inData = hierStackFn(inFacet, activeDomainItems, "INBOUND");
+    $: outData = hierStackFn(outFacet, activeDomainItems, "OUTBOUND");
     $: layoutData = layoutFn(
         inData,
         outData,
@@ -110,30 +101,35 @@
     $: inArcs = mkArcs(layoutData.in, arcFn);
     $: outArcs = mkArcs(layoutData.out, arcFn);
 
+    $: console.log({
+        activeSelection: $activeSelection,
+        inData,
+        outData,
+        inFacet,
+        outFacet
+    });
 </script>
 
+
+<pre>{JSON.stringify($activeSelection?.data.model.data.name, "", 2)}</pre>
 
 <svg viewBox="0 0 {width} {height}"
      width="100%"
      bind:this={el}>
     <Defs/>
-    {#if $showBreadcrumbs}
-        <Breadcrumbs/>
-    {/if}
     <g transform="translate(0 0)"
        class="inbound">
         {#each inArcs as d}
             <path d={d.path}
-                  transform="translate({$indicatorBarWidth} 0)"
+                  transform="translate({indicatorBarWidth} 0)"
                   fill="url(#gradient-in)"
                   filter="url(#glow)"
+                  on:click={() => {$activeSelection = d}}
                   class="flow in-flow"/>
             <g transform="translate(0 {d.sy})">
                 <IndicatorBar height={d.sh}
                               data={mkIndicatorData(d.data)}
-                              on:mouseenter={expandIndicatorBar}
-                              on:mouseleave={collapseIndicatorBar}
-                              width={$indicatorBarWidth}/>
+                              width={indicatorBarWidth}/>
             </g>
         {/each}
     </g>
@@ -143,13 +139,12 @@
             <path d={d.path}
                   fill="url(#gradient-out)"
                   filter="url(#glow)"
+                  on:click={() => {$activeSelection = d}}
                   class="flow out-flow"/>
-            <g transform="translate({(width / 3) - $indicatorBarWidth} {d.ey})">
+            <g transform="translate({(width / 3) - indicatorBarWidth} {d.ey})">
                 <IndicatorBar height={d.eh}
                               data={mkIndicatorData(d.data)}
-                              on:mouseenter={expandIndicatorBar}
-                              on:mouseleave={collapseIndicatorBar}
-                              width={$indicatorBarWidth}/>
+                              width={indicatorBarWidth}/>
             </g>
         {/each}
     </g>
@@ -161,8 +156,12 @@
                        on:click={() => drillIn(mid, $activeRoot)}/>
         {/each}
     </g>
+    {#if $showBreadcrumbs}
+        <Breadcrumbs/>
+    {/if}
 </svg>
 
+{#if false}
 <h3>Controls</h3>
 <table width="100%">
     <colgroup>
@@ -221,15 +220,14 @@
         <td><input type="range" min="0" max="2000" bind:value={height}/></td>
     </tr>
     <tr>
-        <td>Indicator Bar Width ({Math.round($indicatorBarWidth)})</td>
-        <td>
-            <button on:click={() => indicatorBarWidth.set($indicatorBarWidth === 18 ? 100 : 18)}>Bounce</button>
-        </td>
+        <td>Indicator Bar Width ({indicatorBarWidth})</td>
+        <td><input type="range" min="0" max="100" bind:value={indicatorBarWidth}/></td>
+
         <td>Width ({width})</td>
         <td><input type="range" min="0" max="2000" bind:value={width}/></td>
     </tr>
 </table>
-
+{/if}
 
 <style>
     .flow {

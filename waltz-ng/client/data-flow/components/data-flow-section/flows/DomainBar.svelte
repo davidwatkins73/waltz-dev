@@ -19,7 +19,7 @@
         <tspan>{item.data.data.name}</tspan>
         <tspan>{item.data.children ? "+" : "-" }</tspan>
     </text>
-    <circle fill="#f5dcda"
+    <circle fill={item.data.children ? "#4ce57b" : "#ccc"}
             cx={x + 10}
             r="4"
             cy={item.h / 2}>

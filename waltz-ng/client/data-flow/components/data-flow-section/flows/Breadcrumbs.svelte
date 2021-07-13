@@ -1,6 +1,8 @@
 <script>
     import {history, rewind, activeRoot} from "./stores/options";
 </script>
+
+
 <text class="history"
       dy="20"
       dx="10">
@@ -18,6 +20,7 @@
     </tspan>
 </text>
 
+
 <style>
     .history {
         font-size: 1.2em;
@@ -29,6 +32,6 @@
     }
 
     .history-active-root {
-        fill: #aaa
+        fill: #161616
     }
 </style>
