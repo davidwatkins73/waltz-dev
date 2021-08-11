@@ -22,11 +22,11 @@ import com.khartec.waltz.common.DateTimeUtilities;
 import com.khartec.waltz.common.IOUtilities;
 import com.khartec.waltz.common.SetUtilities;
 import com.khartec.waltz.common.XmlUtilities;
+import com.khartec.waltz.jobs.DIJobsConfiguration;
 import com.khartec.waltz.model.EntityLifecycleStatus;
 import com.khartec.waltz.schema.tables.Measurable;
 import com.khartec.waltz.schema.tables.records.MeasurableCategoryRecord;
 import com.khartec.waltz.schema.tables.records.MeasurableRecord;
-import com.khartec.waltz.service.DIConfiguration;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.jooq.lambda.Unchecked;
@@ -86,7 +86,7 @@ public class HigherEducationTaxonomyImport {
 
 
     public static void main(String[] args) throws Exception {
-        ApplicationContext ctx = new AnnotationConfigApplicationContext(DIConfiguration.class);
+        ApplicationContext ctx = new AnnotationConfigApplicationContext(DIJobsConfiguration.class);
 
         HigherEducationTaxonomyImport importer = ctx.getBean(HigherEducationTaxonomyImport.class);
 
@@ -147,29 +147,34 @@ public class HigherEducationTaxonomyImport {
                                  long categoryId,
                                  Set<Tuple3<String, String, String>> relationshipTuples) {
 
+        log("clearing existing external parent ids for category: %d", categoryId);
+
         // clear existing external parent id's
-        dsl.update(MEASURABLE)
+        tx.update(MEASURABLE)
                 .setNull(MEASURABLE.EXTERNAL_PARENT_ID)
                 .where(MEASURABLE.MEASURABLE_CATEGORY_ID.eq(categoryId))
                 .execute();
 
+        log("updating measurables with external parent ids");
         // add resolved parent ids
         relationshipTuples
                 .stream()
-                .map(t -> dsl
+                .map(t -> tx
                         .update(MEASURABLE)
                         .set(MEASURABLE.EXTERNAL_PARENT_ID, t.v2)
                         .where(MEASURABLE.EXTERNAL_ID.eq(t.v3)))
                 .collect(collectingAndThen(toSet(), tx::batch))
                 .execute();
 
+        log("updating measurables with parent ids for category: %d", categoryId);
         int updated = updateParentIdsUsingExtIds(tx, categoryId);
+
         log("Updated %d parent ids", updated);
     }
 
     private int updateParentIdsUsingExtIds(DSLContext tx, long categoryId) {
         // clear existing parent ids
-        dsl.update(MEASURABLE)
+        tx.update(MEASURABLE)
                 .setNull(MEASURABLE.PARENT_ID)
                 .where(MEASURABLE.MEASURABLE_CATEGORY_ID.eq(categoryId))
                 .execute();

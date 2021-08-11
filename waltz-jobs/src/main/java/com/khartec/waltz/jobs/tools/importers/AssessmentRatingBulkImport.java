@@ -17,10 +17,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.khartec.waltz.common.StreamUtilities.mkSiphon;
@@ -31,6 +31,7 @@ import static com.khartec.waltz.jobs.tools.importers.DiffResult.mkDiff;
 import static com.khartec.waltz.model.EntityReference.mkRef;
 import static com.khartec.waltz.schema.Tables.*;
 import static java.lang.String.format;
+import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toSet;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 
@@ -55,7 +56,82 @@ public class AssessmentRatingBulkImport {
         Workbook workbook = new XSSFWorkbook(inputStream);
         Sheet sheet = workbook.getSheetAt(config.sheetPosition());
 
-        Set<AssessmentRatingEntry> existingRatings = dsl
+        Set<AssessmentRatingEntry> requiredRatings = loadRequiredRatings(config, sheet);
+        Set<AssessmentRatingEntry> existingRatings = loadExistingRatings(config);
+
+        DiffResult<AssessmentRatingEntry> diff = mkDiff(
+                existingRatings,
+                requiredRatings,
+                AssessmentRatingEntry::entity,
+                Object::equals);
+
+        dsl.transaction(ctx -> {
+            DSLContext tx = ctx.dsl();
+
+            insertNewRecords(tx, config, diff.otherOnly());
+            updateExistingRecords(tx, config, diff.differingIntersection());
+
+            if(config.mode().equals(SynchronisationMode.FULL)){
+                removeRedundantRecords(tx, config, diff.waltzOnly());
+            }
+
+//            throw new  IllegalArgumentException("BBooooooOOOOOooMMMMMMMM!");
+        });
+    }
+
+    private void removeRedundantRecords(DSLContext tx,
+                                        AssessmentRatingBulkImportConfig config,
+                                        Collection<AssessmentRatingEntry> toRemove) {
+        int[] removedRecords = toRemove
+                .stream()
+                .map(r -> dsl
+                        .deleteFrom(ASSESSMENT_RATING)
+                        .where(ASSESSMENT_RATING.ASSESSMENT_DEFINITION_ID.eq(config.assessmentDefinitionId())
+                                .and(ASSESSMENT_RATING.ENTITY_ID.eq(r.entity().id())
+                                        .and(ASSESSMENT_RATING.ENTITY_KIND.eq(r.entity().kind().name())))))
+                .collect(collectingAndThen(toSet(), tx::batch))
+                .execute();
+
+        LOG.debug(format("Deleted assessment ratings for %d records", IntStream.of(removedRecords).sum()));
+    }
+
+
+    private void updateExistingRecords(DSLContext tx,
+                                       AssessmentRatingBulkImportConfig config,
+                                       Collection<AssessmentRatingEntry> toUpdate) {
+        int[] updatedRecords = toUpdate
+                .stream()
+                .map(r -> dsl
+                        .update(ASSESSMENT_RATING)
+                        .set(ASSESSMENT_RATING.DESCRIPTION, r.description())
+                        .set(ASSESSMENT_RATING.RATING_ID, r.ratingId())
+                        .set(ASSESSMENT_RATING.LAST_UPDATED_AT, DateTimeUtilities.nowUtcTimestamp())
+                        .set(ASSESSMENT_RATING.LAST_UPDATED_BY, config.updateUser())
+                        .where(ASSESSMENT_RATING.ASSESSMENT_DEFINITION_ID.eq(config.assessmentDefinitionId())
+                                .and(ASSESSMENT_RATING.ENTITY_KIND.eq(r.entity().kind().name())
+                                        .and(ASSESSMENT_RATING.ENTITY_ID.eq(r.entity().id())))))
+                .collect(collectingAndThen(toSet(), tx::batch))
+                .execute();
+
+        LOG.debug(format("Updated ratings or descriptions for %d records", IntStream.of(updatedRecords).sum()));
+    }
+
+
+    private void insertNewRecords(DSLContext tx,
+                                  AssessmentRatingBulkImportConfig config,
+                                  Collection<AssessmentRatingEntry> newRecords) {
+        int[] insertedRecords = newRecords
+                .stream()
+                .map(r -> mkAssessmentRatingRecord(config.assessmentDefinitionId(), r, config.updateUser()))
+                .collect(collectingAndThen(toSet(), tx::batchInsert))
+                .execute();
+
+        LOG.debug(format("inserted new assessment ratings for %d records", IntStream.of(insertedRecords).sum()));
+    }
+
+
+    private Set<AssessmentRatingEntry> loadExistingRatings(AssessmentRatingBulkImportConfig config) {
+        return dsl
                 .select(ASSESSMENT_RATING.ENTITY_ID,
                         ASSESSMENT_RATING.ENTITY_KIND,
                         ASSESSMENT_RATING.RATING_ID,
@@ -67,16 +143,18 @@ public class AssessmentRatingBulkImport {
                         .ratingId(r.get(ASSESSMENT_RATING.RATING_ID))
                         .description(r.get(ASSESSMENT_RATING.DESCRIPTION))
                         .build());
+    }
 
+
+    private Set<AssessmentRatingEntry> loadRequiredRatings(AssessmentRatingBulkImportConfig config,
+                                                           Sheet sheet) {
         EntityKind subjectKind = EntityKind.valueOf(dsl
                 .select(ASSESSMENT_DEFINITION.ENTITY_KIND)
                 .from(ASSESSMENT_DEFINITION)
                 .where(ASSESSMENT_DEFINITION.ID.eq(config.assessmentDefinitionId()))
                 .fetchOne(ASSESSMENT_DEFINITION.ENTITY_KIND));
 
-
         Aliases<Long> ratingAliases = mkRatingAliases(config);
-
 
         Map<String, Long> externalIdToEntityIdMap = loadExternalIdToEntityIdMap(subjectKind);
 
@@ -101,62 +179,7 @@ public class AssessmentRatingBulkImport {
 
         noEntityFoundSiphon.getResults().forEach(t -> System.out.printf("Couldn't find an entity id for row: %s%n", t.limit3()));
         noRatingFoundSiphon.getResults().forEach(t -> System.out.printf("Couldn't find a rating id for row: %s%n", t.limit3()));
-
-        DiffResult<AssessmentRatingEntry> diff = mkDiff(
-                existingRatings,
-                requiredRatings,
-                AssessmentRatingEntry::entity,
-                Object::equals);
-
-        dsl.transaction(ctx -> {
-
-            DSLContext tx = ctx.dsl();
-
-            int[] insertedRecords = diff
-                    .otherOnly()
-                    .stream()
-                    .map(r -> mkAssessmentRatingRecord(config.assessmentDefinitionId(), r, config.updateUser()))
-                    .collect(Collectors.collectingAndThen(toSet(), tx::batchInsert))
-                    .execute();
-
-            LOG.debug(format("inserted new assessment ratings for %d records", IntStream.of(insertedRecords).sum()));
-
-            int[] updatedRecords = diff
-                    .differingIntersection()
-                    .stream()
-                    .map(r -> dsl
-                            .update(ASSESSMENT_RATING)
-                            .set(ASSESSMENT_RATING.DESCRIPTION, r.description())
-                            .set(ASSESSMENT_RATING.RATING_ID, r.ratingId())
-                            .set(ASSESSMENT_RATING.LAST_UPDATED_AT, DateTimeUtilities.nowUtcTimestamp())
-                            .set(ASSESSMENT_RATING.LAST_UPDATED_BY, config.updateUser())
-                            .where(ASSESSMENT_RATING.ASSESSMENT_DEFINITION_ID.eq(config.assessmentDefinitionId())
-                                    .and(ASSESSMENT_RATING.ENTITY_KIND.eq(r.entity().kind().name())
-                                            .and(ASSESSMENT_RATING.ENTITY_ID.eq(r.entity().id())))))
-                    .collect(Collectors.collectingAndThen(toSet(), tx::batch))
-                    .execute();
-
-            LOG.debug(format("Updated ratings or descriptions for %d records", IntStream.of(updatedRecords).sum()));
-
-            if(config.mode().equals(SynchronisationMode.FULL)){
-
-                int[] removedRecords = diff
-                        .waltzOnly()
-                        .stream()
-                        .map(r -> dsl
-                                .deleteFrom(ASSESSMENT_RATING)
-                                .where(ASSESSMENT_RATING.ASSESSMENT_DEFINITION_ID.eq(config.assessmentDefinitionId())
-                                        .and(ASSESSMENT_RATING.ENTITY_ID.eq(r.entity().id())
-                                                .and(ASSESSMENT_RATING.ENTITY_KIND.eq(r.entity().kind().name())))))
-                        .collect(Collectors.collectingAndThen(toSet(), tx::batch))
-                        .execute();
-
-                LOG.debug(format("Deleted assessment ratings for %d records", IntStream.of(removedRecords).sum()));
-
-            }
-
-//            throw new  IllegalArgumentException("BBooooooOOOOOooMMMMMMMM!");
-        });
+        return requiredRatings;
     }
 
 
@@ -245,7 +268,10 @@ public class AssessmentRatingBulkImport {
         return ratingAliases;
     }
 
-    private AssessmentRatingRecord mkAssessmentRatingRecord(Long defnId, AssessmentRatingEntry r, String updateUser) {
+
+    private AssessmentRatingRecord mkAssessmentRatingRecord(Long defnId,
+                                                            AssessmentRatingEntry r,
+                                                            String updateUser) {
 
         AssessmentRatingRecord record = dsl.newRecord(ASSESSMENT_RATING);
         record.setAssessmentDefinitionId(defnId);
@@ -260,12 +286,13 @@ public class AssessmentRatingBulkImport {
     }
 
 
+    // -- MAIN ------------------------------------------------------
+
     public static void main(String[] args) throws Exception {
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(DIConfiguration.class);
         AssessmentRatingBulkImport importer = ctx.getBean(AssessmentRatingBulkImport.class);
 
         String filename = "/assessment_rating_upload.xlsx";
-
 
         AssessmentRatingBulkImportConfig config = ImmutableAssessmentRatingBulkImportConfig.builder()
                 .assessmentDefinitionId(4L)

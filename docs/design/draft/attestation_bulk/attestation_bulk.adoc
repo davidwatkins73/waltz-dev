@@ -1,0 +1,130 @@
+= Bulk Measurable Attestations
+David Watkins <david.watkins@db.com>
+:version: v0.1
+:modified: 2021-08
+:status: DRAFT
+:toc:
+
+<<<
+== Document Info
+
+|===
+| Attribute | Value
+
+| Version
+| {version} ({modified})
+
+| Target Version
+| 1.36 / 1.37
+
+| Lead
+| Dave Watkins
+|===
+
+<<<
+== Overview
+
+Measurable attestations are used to improve data quality in Waltz by asking knowledgeable users to attest to the accuracy of mapping.
+
+Attestation _runs_ may be issued against all application meeting a basic _selection criteria_ and for users with a given _role_.
+For example the run may be issued for all apps under the _organisational unit 'Group'_ and are assigned to the relevant _domain architect_.
+
+=== Problems
+
+Problems appear when some users are associated with a large number of applications.
+This causes them to have many attestations to perform.
+In some cases we have seen over 600 individual attestations being assigned to a single user.
+
+Waltz is capable of handling that many _attestation instances_ without any technical issues, however the burden on the user can be excessive.
+
+
+
+== Options
+There are several approaches to alleviating the user burden.
+Each comes with differing trade-offs which we will attempt to capture.
+
+---
+
+=== Select All, Attest
+This approach would involve adding an `Attest All` button to the attestation instance list screen.
+By clicking on the button the user would bulk attest all outstanding attestation instances.
+
+==== Refinements
+This approach could be refined by adding features such as:
+
+* Only allow bulk attestation for applications which have a recent attestation.
+_Never-attested_ and _out-of-date attestations_ would still need to be performed individually.
+* Only allow bulk attestations for apps which have had no taxonomy mapping changes since the last attestation.
+
+==== Pros
+* Quick for users to bulk attest
+* Low implementation complexity
+* Audit trail completely in Waltz
+
+==== Cons
+* Poor data quality characteristics as users don't need to verify each entry
+* Refinements could make implementation trickier
+
+---
+
+=== Optimize Attestation UI
+The current UI implementation has some scope for optimization.
+For example:
+
+* After attesting one instance, _automatically open and show the next_ instance (increases user speed)
+* Show a _cut down taxonomy tree_ which only displays relevant nodes (reduces cognitive load)
+* _Disable some mouse over effects_ (increases application performance)
+* Make _changes since last attestation_ more obvious
+* _Layout tweaks_ to reduce mouse movement (increases user speed)
+* _Keyboard shortcuts_ (increases user speed)
+
+==== Pros
+* Maintains good audit
+* Users visually inspect each entry (if only very briefly)
+* General improvement to Waltz, optimizations would be beneficial to flow attestations etc.
+
+==== Cons
+* More dev work
+* Possibly only modest improvements to user burden
+
+---
+
+=== Bulk Delegation
+Reduce the burden on individual users by allowing them to quickly delegate responsibility for the attestation to other users.
+
+==== Pros
+* Could be done via spreadsheets allowing for quick bulk delegation selection
+* Audit maintained as attestations are still performed in Waltz
+
+==== Cons
+* Spreads the burden, does not eliminate/reduce it
+* Delegates may not have knowledge to adequately assess correctness of data, leading to poor data quality characteristics
+* manual effort to coordinate distribution and return of spreadsheets
+
+---
+
+=== Attest via Spreadsheet
+Dump all attestation instances and some supporting data into a spreadsheet and ask users to attest and return the spreadsheets.
+Once returned the applications will be marked as attested.
+
+==== Refinements
+* Provide more specific detail about certain parts of the taxonomy, i.e. a focus on _Payments_
+** this is optimized for a specific use case and is not really suitable for general use
+
+==== Pros
+* simple implementation
+* quick for users to bulk attest
+
+==== Cons
+* very difficult to provide enough contextual data for users to adequately assess correctness
+* audit _less solid_ as external mechanism is in the loop
+* manual effort to coordinate distribution and return of spreadsheets
+
+
+
+== Conclusion
+
+We consider **_Select All, Attest_** and **_Optimize Attestation UI_** to be the strongest options.
+It may be possible to combine the two, for example by bulk attesting unchanged instances and then using an optimized UI for the remainding instances.
+
+
