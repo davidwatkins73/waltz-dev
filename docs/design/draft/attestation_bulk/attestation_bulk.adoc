@@ -37,7 +37,7 @@ In some cases we have seen over 600 individual attestations being assigned to a 
 
 Waltz is capable of handling that many _attestation instances_ without any technical issues, however the burden on the user can be excessive.
 
-
+<<<
 
 == Options
 There are several approaches to alleviating the user burden.
@@ -65,7 +65,7 @@ _Never-attested_ and _out-of-date attestations_ would still need to be performed
 * Poor data quality characteristics as users don't need to verify each entry
 * Refinements could make implementation trickier
 
----
+<<<
 
 === Optimize Attestation UI
 The current UI implementation has some scope for optimization.
@@ -87,7 +87,7 @@ For example:
 * More dev work
 * Possibly only modest improvements to user burden
 
----
+<<<
 
 === Bulk Delegation
 Reduce the burden on individual users by allowing them to quickly delegate responsibility for the attestation to other users.
@@ -101,7 +101,7 @@ Reduce the burden on individual users by allowing them to quickly delegate respo
 * Delegates may not have knowledge to adequately assess correctness of data, leading to poor data quality characteristics
 * manual effort to coordinate distribution and return of spreadsheets
 
----
+<<<
 
 === Attest via Spreadsheet
 Dump all attestation instances and some supporting data into a spreadsheet and ask users to attest and return the spreadsheets.
@@ -120,7 +120,7 @@ Once returned the applications will be marked as attested.
 * audit _less solid_ as external mechanism is in the loop
 * manual effort to coordinate distribution and return of spreadsheets
 
-
+<<<
 
 == Conclusion
 
