@@ -1,0 +1,135 @@
+= Survey Workflows (Plan)
+David Watkins <david.watkins@db.com>, Jessica Woodland-Scott <jessica.woodland-scott@db.com>
+:version: v0.1
+:modified: 2021-11
+:status: DRAFT
+:toc:
+
+<<<
+== Document Info
+
+|===
+| Attribute | Value
+
+| Status
+| {status} {version} ({modified})
+
+| Target Version
+| 1.4x (Q1 2022)
+
+|===
+
+
+== Workflow Support
+
+=== Proposed Tables
+
+[NOTE]
+The following are early-stage ideas on what these tables may look like.
+We are confident that the number of tables and there intent is correct.
+We are less confident that the attributes as complete and correct.
+
+
+==== workflow_definition
+
+|===
+| Attribute | Type | Description
+
+| `id`                          | Long                  | Sequential identifier
+| `name`                        | String                | name
+| `description`                 | String                | description
+| `external_id`                 | String                | external id
+| `created_at`                  | Timestamp             | workflow first created
+| `created_by`                  | String                | user to create workflow
+| `owning_role`                 | String                | which users can modify this workflow
+| `status`                      | String                | ACTIVE / DRAFT / REMOVED
+|===
+
+
+==== workflow_state
+Describes the different states of a workflow, the state_kind indicates the stage of this state in the workflow
+
+|===
+| Attribute | Type | Description
+
+| `id`                   |       Long               | identifier
+| `workflow_defn_id`     |       Long               | FK to workflow_definition
+| `name`                 |       String             | name
+| `description`          |       String             | description
+| `external_id`          |       String             | Description
+| `state_kind`           |       String             | NOT_STARTED/ IN_PROGRESS /COMPLETED
+|===
+
+
+==== workflow_instance
+
+|===
+| Attribute | Type | Description
+
+| `id`                      | Long                  | Sequential identifier
+| `workflow_definition_id`  | Long                  | FK to workflow definition
+| `state_id`                | Long                  | state of this instance
+| `parent_entity_id`        | Long                  | Entity this workflow is acting on
+| `parent_entity_kind`      | String                | Entity this workflow is acting on
+| `external_id`             | String                | external id
+| `created_at`              | Timestamp             | workflow first created
+| `created_by`              | String                | user to create workflow
+| `last_updated_at`         | Timestamp             | when was this instance last updated
+| `last_updated_by`         | String                | user to last update this instance
+|===
+
+<<<
+
+
+== Curent State Overview
+
+=== Surveys and their lifecycles
+
+Surveys allow for the collection of ad-hoc data within the overall structure of Waltz.
+Surveys are focused on a specific entity type (e.g. `APPLICATION`, `CHANGE_INITIATIVE`) and issued to users matching a given set of roles describing their involvement with the entity.
+The set of target entities for the survey is derived from a Waltz selection mechanism (e.g. apps under a specific organisational unit, apps performing a specific function etc).
+
+A survey can be issued via the _Surveys_ section on the navigation bar for the related entity type, provided there is an existing survey template.
+Alternatively, these can be issued in bulk via a _Survey Run_ by a _Survey Admin_.
+
+Survey Owners have the ability to:
+
+* `WITHDRAW` a survey at any stage, unless `COMPLETED` or `APPROVED`.
+* `APPROVE` or `REJECT` a survey once completed.
+* Change the 'Due' date.
+* Assign other recipients.
+
+Survey recipients have the ability to:
+
+* Edit the survey response.
+* Assign other recipients.
+
+If a `COMPLETED` or `WITHDRAWN` survey is reopened, or if a survey is `REJECTED`, the version number will increase.
+
+The diagram below show the state transition diagram for surveys.
+[green]#Green# transitions indicate actions that may be performed by participants and/or survey administrators.
+Transitions restricted to survey administrators are [red]#red#.
+
+[graphviz, survey_state_diagram, svg]
+.Survey state transition diagram
+----
+digraph survey_state_machine {
+nodesep=0.7;
+
+    NOT_STARTED -> WITHDRAWN [color=red, label=withdrawing];
+    NOT_STARTED -> COMPLETED [color=green, label=submitting];
+    NOT_STARTED -> IN_PROGRESS [color=green, label=saving];
+    IN_PROGRESS -> COMPLETED [color=green, label=submitting];
+    IN_PROGRESS -> WITHDRAWN [color=red, label=withdrawing];
+    IN_PROGRESS -> IN_PROGRESS [color=green, label=saving];
+    COMPLETED -> APPROVED [color=red, label=approving];
+    COMPLETED -> REJECTED [color=red, label=rejecting];
+    APPROVED -> IN_PROGRESS [color=green, label=reopening];
+    REJECTED -> WITHDRAWN [color=red, label=withdrawing];
+    REJECTED -> IN_PROGRESS [color=green, label=reopening];
+    WITHDRAWN -> IN_PROGRESS [color=red, label=reopening];
+
+    {rank="same"; APPROVED; REJECTED}
+}
+----
+

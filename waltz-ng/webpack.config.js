@@ -47,7 +47,7 @@ module.exports = {
             minSize: 30000,
             maxSize: 600000,
             minChunks: 1,
-            name: true,
+            name: "sc",
             cacheGroups: {
                 vendors: {
                     test: /[\\/]node_modules[\\/]/,
@@ -88,7 +88,7 @@ module.exports = {
                     {
                         loader: "svelte-loader",
                         options: {
-                            preprocess: require('svelte-preprocess')({
+                            preprocess: require("svelte-preprocess")({
                                 // postcss: true
                             }),
                             emitCss: true,
@@ -120,11 +120,7 @@ module.exports = {
                 }
             }, {
                 test: /\.png$/,
-                loader: "file-loader",
-                options: {
-                    mimetype: "image/png",
-                    limit: 16384
-                }
+                type: "asset/resource"
             }, {
                 test: /\.html?$/,
                 exclude: /node_modules/,
