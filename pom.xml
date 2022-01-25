@@ -81,7 +81,7 @@
         <jool.version>0.9.14</jool.version>
         <jooq.version>3.13.2</jooq.version> <!--If this changes see issue #4553 -->
         <junit.version>4.13</junit.version>
-        <jwt.version>3.14.0</jwt.version>
+        <jwt.version>3.18.3</jwt.version>
         <liquibase.maven.version>3.5.1</liquibase.maven.version>
         <logback.version>1.2.3</logback.version>
         <pcollections.version>3.1.4</pcollections.version>
@@ -301,7 +301,7 @@
                 <jooq.dialect>H2</jooq.dialect>
                 <jooq.group>org.jooq</jooq.group>
                 <jooq.database>org.jooq.meta.h2.H2Database</jooq.database>
-                <database.catalog></database.catalog> <!-- only required for MSSQL -->
+                <database.catalog/> <!-- only required for MSSQL -->
             </properties>
             <dependencies>
                 <dependency>
@@ -381,7 +381,7 @@
                 <jooq.dialect>POSTGRES</jooq.dialect>
                 <jooq.group>org.jooq</jooq.group>
                 <jooq.database>org.jooq.meta.postgres.PostgresDatabase</jooq.database>
-                <database.catalog></database.catalog> <!-- only required for MSSQL -->
+                <database.catalog/> <!-- only required for MSSQL -->
             </properties>
             <dependencies>
                 <dependency>
@@ -440,7 +440,7 @@
             <properties>
                 <database.url>jdbc:postgresql://localhost:5432/waltz</database.url>
                 <database.user>postgres</database.user>
-                <database.password></database.password>
+                <database.password/>
                 <database.schema>PUBLIC</database.schema>
             </properties>
         </profile>
@@ -451,7 +451,7 @@
             <properties>
                 <database.url>jdbc:mysql://127.0.0.1:3306/waltz</database.url>
                 <database.user>root</database.user>
-                <database.password></database.password>
+                <database.password/>
                 <database.schema>waltz</database.schema>
             </properties>
         </profile>
