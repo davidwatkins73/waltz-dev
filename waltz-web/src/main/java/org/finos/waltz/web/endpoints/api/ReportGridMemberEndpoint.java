@@ -66,12 +66,12 @@ public class ReportGridMemberEndpoint implements Endpoint {
     }
 
 
-    public Set<ReportGridMember> findForGridIdRoute(Request req, Response resp) throws IOException {
+    public Set<ReportGridMember> findForGridIdRoute(Request req, Response resp) {
         return reportGridMemberService.findByGridId(getId(req));
     }
 
 
-    public Set<Person> findPeopleForGridIdRoute(Request req, Response resp) throws IOException {
+    public Set<Person> findPeopleForGridIdRoute(Request req, Response resp) {
         return reportGridMemberService.findPeopleByGridId(getId(req));
     }
 
@@ -92,7 +92,6 @@ public class ReportGridMemberEndpoint implements Endpoint {
 
 
     public boolean delete(Request req, Response resp) throws IOException, InsufficientPrivelegeException {
-        System.out.println(req);
         return reportGridMemberService.delete(
                 readBody(req, ReportGridMember.class),
                 getUsername(req));

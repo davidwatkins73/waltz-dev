@@ -49,4 +49,23 @@
         </createIndex>
     </changeSet>
 
+
+    <changeSet id="20220817-6191-1"
+               author="davidwatkins73">
+
+        <update tableName="server_information">
+            <column name="is_virtual" valueBoolean="false"/>
+            <where>is_virtual is null</where>
+        </update>
+
+        <addDefaultValue tableName="server_information"
+                         columnName="is_virtual"
+                         defaultValueBoolean="false"/>
+
+        <addNotNullConstraint tableName="server_information"
+                              columnDataType="boolean"
+                              columnName="is_virtual"/>
+
+    </changeSet>
+
 </databaseChangeLog>

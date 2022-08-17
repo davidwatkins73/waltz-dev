@@ -87,7 +87,7 @@ public enum RelationshipKind {
     ));
 
 
-    private Set<Tuple2<EntityKind, EntityKind>> allowedEntityKinds;
+    private final Set<Tuple2<EntityKind, EntityKind>> allowedEntityKinds;
 
 
     RelationshipKind(Set<Tuple2<EntityKind, EntityKind>> allowedEntityKinds) {

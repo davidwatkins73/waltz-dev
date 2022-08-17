@@ -59,14 +59,10 @@ public class ServerInformationDao {
 
         ServerInformationRecord row = r.into(ServerInformationRecord.class);
 
-        boolean isVirtual = row.getIsVirtual() == null
-                ? false
-                : row.getIsVirtual();
-
         return ImmutableServerInformation.builder()
                 .id(row.getId())
                 .hostname(row.getHostname())
-                .virtual(isVirtual)
+                .virtual(row.getIsVirtual())
                 .operatingSystem(row.getOperatingSystem())
                 .operatingSystemVersion(row.getOperatingSystemVersion())
                 .location(row.getLocation())

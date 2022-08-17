@@ -103,13 +103,14 @@ public class ModifyCommandProcessor implements ChangeUnitCommandProcessor {
 
         boolean success = attributeChanges
                 .stream()
-                .map(a -> processAttributeChange(a, changeUnit, userName))
-                .allMatch(a -> a == true);
+                .allMatch(a -> processAttributeChange(a, changeUnit, userName));
 
         return ImmutableCommandResponse.<UpdateExecutionStatusCommand>builder()
                 .entityReference(subject.entityReference())
                 .originalCommand(command)
-                .outcome(success ? CommandOutcome.SUCCESS : CommandOutcome.FAILURE)
+                .outcome(success
+                        ? CommandOutcome.SUCCESS
+                        : CommandOutcome.FAILURE)
                 .message("Modified physical flow: " + subject + " attributes")
                 .build();
 

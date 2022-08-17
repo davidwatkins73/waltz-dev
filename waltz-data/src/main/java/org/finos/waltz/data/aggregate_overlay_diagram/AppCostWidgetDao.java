@@ -221,8 +221,6 @@ public class AppCostWidgetDao {
                 .where(mr.MEASURABLE_ID.in(backingMeasurableIds))
                 .and(mr.ENTITY_ID.in(inScopeApplicationSelector));
 
-        System.out.println(qry);
-
         return qry
                 .fetchSet(r -> ImmutableMeasurableCostEntry
                         .builder()

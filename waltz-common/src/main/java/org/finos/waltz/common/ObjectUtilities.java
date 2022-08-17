@@ -23,11 +23,6 @@ import java.util.stream.Stream;
 
 public class ObjectUtilities {
 
-    public static <T> T dump(T x) {
-        System.out.println("dump: " + x);
-        return x;
-    }
-
 
     @SafeVarargs
     public static <T> T  firstNotNull(T... ts) {

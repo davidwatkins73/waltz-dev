@@ -44,11 +44,6 @@ public class StreamUtilities {
     }
 
 
-    public static <T> Function<T, T> tap() {
-        return tap(System.out::println);
-    }
-
-
     public static <T> Function<T, T> tap(Consumer<T> consumer) {
         return t -> {
             consumer.accept(t);
