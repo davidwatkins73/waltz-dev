@@ -35,9 +35,7 @@ public class WaltzApplication implements SparkApplication {
         AnnotationConfigApplicationContext ctx = Main.getSpringContext();
         if (ctx != null) {
             HikariDataSource dataSource = ctx.getBean(HikariDataSource.class);
-            if (dataSource != null) {
-                dataSource.close();
-            }
+            dataSource.close();
             ctx.close();
         }
     }
