@@ -39,7 +39,6 @@ import java.util.Set;
 import static java.util.Optional.ofNullable;
 import static org.finos.waltz.common.Checks.checkNotNull;
 import static org.finos.waltz.common.CollectionUtilities.maybeFirst;
-import static org.finos.waltz.common.FunctionUtilities.time;
 
 @Service
 public class CostService {
@@ -80,30 +79,27 @@ public class CostService {
 
         GenericSelector genericSelector = genericSelectorFactory.applyForKind(targetKind, selectionOptions);
 
-        Set<EntityCost> topCosts = time(
-                "topCosts: "+selectionOptions.entityReference(),
-                () -> costDao.findTopCostsForCostKindAndSelector(
+        Set<EntityCost> topCosts = costDao
+                .findTopCostsForCostKindAndSelector(
                         costKindId,
                         genericSelector,
-                        limit));
+                        limit);
 
         Integer year = maybeFirst(topCosts)
                 .map(EntityCost::year)
                 .orElse(LocalDate.now().getYear());
 
-        BigDecimal totalCost = time(
-                "totalCosts: "+selectionOptions.entityReference(),
-                () -> costDao.getTotalForKindAndYearBySelector(
+        BigDecimal totalCost = costDao
+                .getTotalForKindAndYearBySelector(
                         costKindId,
                         year,
-                        genericSelector));
+                        genericSelector);
 
-        Tuple2<Integer, Integer> mappedAndMissingCounts = time(
-                "missingCosts: "+selectionOptions.entityReference(),
-                () -> costDao.getMappedAndMissingCountsForKindAndYearBySelector(
+        Tuple2<Integer, Integer> mappedAndMissingCounts = costDao
+                .getMappedAndMissingCountsForKindAndYearBySelector(
                         costKindId,
                         year,
-                        genericSelector));
+                        genericSelector);
 
         return ImmutableEntityCostsSummary
                 .builder()

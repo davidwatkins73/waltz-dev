@@ -64,10 +64,11 @@ public abstract class Bookmark implements
 
 
     public EntityReference entityReference() {
-        return EntityReference.mkRef(
-                EntityKind.BOOKMARK,
-                id().orElse(null),
-                title().orElse(""),
-                description().orElse(""));
+        return ImmutableEntityReference.builder()
+                .kind(EntityKind.BOOKMARK)
+                .id(id().orElseThrow(() -> new IllegalStateException("Cannot create an entity reference from a bookmark without an id")))
+                .name(title())
+                .description(description().orElse(""))
+                .build();
     }
 }
