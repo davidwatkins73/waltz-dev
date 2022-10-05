@@ -82,8 +82,8 @@
         <freemarker.version>2.3.31</freemarker.version>
         <hikari.version>3.4.5</hikari.version>
         <immutables.version>2.9.2</immutables.version>
-        <jackson.version>2.13.3</jackson.version>
-        <jackson-jsr310.version>2.13.3</jackson-jsr310.version>
+        <jackson.version>2.13.4</jackson.version>
+        <jackson-jsr310.version>2.13.4</jackson-jsr310.version>
         <java.version>1.8</java.version>
         <javax.mail.version>1.4.7</javax.mail.version>
         <jbcrypt.version>0.4.3</jbcrypt.version>
@@ -98,7 +98,7 @@
         <pcollections.version>3.1.4</pcollections.version>
         <poi.version>5.2.2</poi.version>
         <slf4j.version>1.7.36</slf4j.version>
-        <spark.version>2.9.1</spark.version> <!-- 2.9.3 causes issues with tomcat -->
+        <spark.version>2.9.4</spark.version> <!-- 2.9.3 causes issues with tomcat -->
         <spring.version>5.3.20</spring.version>
         <super-csv.version>2.4.0</super-csv.version>
         <surefire.version>2.22.2</surefire.version>
@@ -352,7 +352,7 @@
                 <jooq.dialect>H2</jooq.dialect>
                 <jooq.group>org.jooq</jooq.group>
                 <jooq.database>org.jooq.meta.h2.H2Database</jooq.database>
-                <database.catalog></database.catalog> <!-- only required for MSSQL -->
+                <database.catalog/> <!-- only required for MSSQL -->
             </properties>
             <dependencies>
                 <dependency>
@@ -432,7 +432,7 @@
                 <jooq.dialect>POSTGRES</jooq.dialect>
                 <jooq.group>org.jooq</jooq.group>
                 <jooq.database>org.jooq.meta.postgres.PostgresDatabase</jooq.database>
-                <database.catalog></database.catalog> <!-- only required for MSSQL -->
+                <database.catalog/> <!-- only required for MSSQL -->
             </properties>
             <dependencies>
                 <dependency>
@@ -491,7 +491,7 @@
             <properties>
                 <database.url>jdbc:postgresql://localhost:5432/waltz</database.url>
                 <database.user>postgres</database.user>
-                <database.password></database.password>
+                <database.password/>
                 <database.schema>PUBLIC</database.schema>
             </properties>
         </profile>
@@ -502,7 +502,7 @@
             <properties>
                 <database.url>jdbc:mysql://127.0.0.1:3306/waltz</database.url>
                 <database.user>root</database.user>
-                <database.password></database.password>
+                <database.password/>
                 <database.schema>waltz</database.schema>
             </properties>
         </profile>
