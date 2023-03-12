@@ -430,6 +430,13 @@ export const entity = {
         description: null,
         position: 2596
     },
+    SVG_DIAGRAM: {
+        key: "SVG_DIAGRAM",
+        name: "SVG Diagram",
+        icon: "file-image-o",
+        description: null,
+        position: 2598
+    },
     SYSTEM: {
         key: "SYSTEM",
         name: "System",

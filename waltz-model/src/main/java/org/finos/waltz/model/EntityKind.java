@@ -95,6 +95,7 @@ public enum EntityKind {
     SURVEY_QUESTION("Survey question"),
     SURVEY_RUN("Survey run"),
     SURVEY_TEMPLATE("Survey template"),
+    SVG_DIAGRAM("SVG Diagram"),
     SYSTEM("System"),
     TAG("Tag"),
     USER_ROLE("User Role"),
