@@ -31,4 +31,18 @@
         <dropTable tableName="entity_tag"/>
     </changeSet>
 
+    <changeSet id="20230312-6496-1"
+               failOnError="false"
+               author="davidwatkins73">
+        <insert tableName="entity_named_note_type">
+            <column name="applicable_entity_kinds" value="SVG_DIAGRAM"/>
+            <column name="name" value="Person NavAid Model"/>
+            <column name="description" value="Used to persist the underlying json model associated with a custom navaid diagram"/>
+            <column name="is_readonly" valueBoolean="false"/>
+            <column name="position" valueNumeric="0"/>
+            <column name="external_id" value="WALTZ_NAVAID_PERSON_MODEL_V1"/>
+        </insert>
+    </changeSet>
+
+
 </databaseChangeLog>
