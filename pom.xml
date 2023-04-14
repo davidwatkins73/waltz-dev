@@ -100,7 +100,7 @@
         <slf4j.version>1.7.36</slf4j.version>
         <spark.version>2.9.1</spark.version> <!-- 2.9.3 causes issues with tomcat -->
         <spark-freemarker.version>2.7.1</spark-freemarker.version>
-        <spring.version>5.3.24</spring.version>
+        <spring.version>5.3.27</spring.version>
         <super-csv.version>2.4.0</super-csv.version>
         <surefire.version>2.22.2</surefire.version>
         <commons-jexl3.version>3.2.1</commons-jexl3.version>
@@ -363,7 +363,7 @@
                 <jooq.dialect>H2</jooq.dialect>
                 <jooq.group>org.jooq</jooq.group>
                 <jooq.database>org.jooq.meta.h2.H2Database</jooq.database>
-                <database.catalog></database.catalog> <!-- only required for MSSQL -->
+                <database.catalog/> <!-- only required for MSSQL -->
             </properties>
             <dependencies>
                 <dependency>
@@ -443,7 +443,7 @@
                 <jooq.dialect>POSTGRES</jooq.dialect>
                 <jooq.group>org.jooq</jooq.group>
                 <jooq.database>org.jooq.meta.postgres.PostgresDatabase</jooq.database>
-                <database.catalog></database.catalog> <!-- only required for MSSQL -->
+                <database.catalog/> <!-- only required for MSSQL -->
             </properties>
             <dependencies>
                 <dependency>
@@ -495,9 +495,9 @@
                 <database.password>sa</database.password> -->
                 <database.url>jdbc:h2:file:~/data/waltz/h2/waltzdb;DATABASE_TO_UPPER=false</database.url>
                 <database.user>root</database.user>
-                <database.password></database.password>
+                <database.password/>
                 <database.schema>PUBLIC</database.schema>
-                <database.catalog></database.catalog>
+                <database.catalog/>
             </properties>
         </profile>
 
@@ -507,7 +507,7 @@
             <properties>
                 <database.url>jdbc:postgresql://localhost:5432/waltz</database.url>
                 <database.user>postgres</database.user>
-                <database.password></database.password>
+                <database.password/>
                 <database.schema>PUBLIC</database.schema>
             </properties>
         </profile>
@@ -518,7 +518,7 @@
             <properties>
                 <database.url>jdbc:mysql://127.0.0.1:3306/waltz</database.url>
                 <database.user>root</database.user>
-                <database.password></database.password>
+                <database.password/>
                 <database.schema>waltz</database.schema>
             </properties>
         </profile>
