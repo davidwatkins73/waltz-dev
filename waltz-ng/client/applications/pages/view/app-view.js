@@ -19,6 +19,7 @@
 import { CORE_API } from "../../../common/services/core-api-utils";
 
 import template from "./app-view.html";
+import {pageReference} from "../../../svelte-stores/global";
 
 
 const initialState = {
@@ -45,13 +46,11 @@ function controller($stateParams,
     function loadAll(id) {
         serviceBroker
             .loadViewData(CORE_API.ApplicationStore.getById, [id])
-            .then(r => vm.app = r.data)
-            .then(() => postLoadActions(vm.app));
-    }
-
-
-    function postLoadActions(app) {
-        addToHistory(historyStore, app);
+            .then(r => {
+                vm.app = r.data;
+                addToHistory(historyStore, vm.app);
+                pageReference.set(vm.app);
+            });
     }
 
     // -- BOOT --

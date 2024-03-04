@@ -22,6 +22,7 @@ import {activeSections} from "./dynamic-section/section-store";
 import toasts from "./svelte-stores/toast-store";
 import popover from "./svelte-stores/popover-store";
 import pageInfo from "./svelte-stores/page-navigation-store";
+import {pageReference} from "./svelte-stores/global";
 
 
 function warmUpCache($q, serviceBroker) {
@@ -239,6 +240,8 @@ function configureSvelteStoreListener($transitions, $state, $scope) {
             options: target.options(),
             isNotification: true
         });
+
+        pageReference.set(null);
 
     });
 

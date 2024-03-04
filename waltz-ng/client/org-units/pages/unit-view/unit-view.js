@@ -20,7 +20,7 @@ import {initialiseData} from "../../../common/index";
 
 import template from "./unit-view.html";
 import {CORE_API} from "../../../common/services/core-api-utils";
-
+import {pageReference} from "../../../svelte-stores/global";
 
 const initialState = {
     filters: {},
@@ -51,9 +51,11 @@ function controller($stateParams,
 
         serviceBroker
             .loadViewData(CORE_API.OrgUnitStore.getById, [ id ])
-            .then(r => vm.orgUnit = r.data)
-            .then(() => addToHistory(historyStore, vm.orgUnit));
-
+            .then(r => {
+                vm.orgUnit = r.data;
+                addToHistory(historyStore, vm.orgUnit);
+                pageReference.set(vm.orgUnit);
+            })
     };
 
 
