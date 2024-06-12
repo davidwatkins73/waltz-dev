@@ -107,7 +107,7 @@
 
         <timestamp>${maven.build.timestamp}</timestamp>
         <playwright.skip>true</playwright.skip>
-        <jetty.version>9.4.48.v20220622</jetty.version>
+        <jetty.version>9.4.52.v20230823</jetty.version>
     </properties>
 
 
@@ -372,7 +372,7 @@
                 <jooq.dialect>H2</jooq.dialect>
                 <jooq.group>org.jooq</jooq.group>
                 <jooq.database>org.jooq.meta.h2.H2Database</jooq.database>
-                <database.catalog></database.catalog> <!-- only required for MSSQL -->
+                <database.catalog/> <!-- only required for MSSQL -->
             </properties>
             <dependencies>
                 <dependency>
@@ -452,7 +452,7 @@
                 <jooq.dialect>POSTGRES</jooq.dialect>
                 <jooq.group>org.jooq</jooq.group>
                 <jooq.database>org.jooq.meta.postgres.PostgresDatabase</jooq.database>
-                <database.catalog></database.catalog> <!-- only required for MSSQL -->
+                <database.catalog/> <!-- only required for MSSQL -->
             </properties>
             <dependencies>
                 <dependency>
@@ -504,9 +504,9 @@
                 <database.password>sa</database.password> -->
                 <database.url>jdbc:h2:file:~/data/waltz/h2/waltzdb;DATABASE_TO_UPPER=false</database.url>
                 <database.user>root</database.user>
-                <database.password></database.password>
+                <database.password/>
                 <database.schema>PUBLIC</database.schema>
-                <database.catalog></database.catalog>
+                <database.catalog/>
             </properties>
         </profile>
 
@@ -516,7 +516,7 @@
             <properties>
                 <database.url>jdbc:postgresql://localhost:5432/waltz</database.url>
                 <database.user>postgres</database.user>
-                <database.password></database.password>
+                <database.password/>
                 <database.schema>PUBLIC</database.schema>
             </properties>
         </profile>
@@ -527,7 +527,7 @@
             <properties>
                 <database.url>jdbc:mysql://127.0.0.1:3306/waltz</database.url>
                 <database.user>root</database.user>
-                <database.password></database.password>
+                <database.password/>
                 <database.schema>waltz</database.schema>
             </properties>
         </profile>
