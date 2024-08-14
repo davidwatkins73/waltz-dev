@@ -37,6 +37,7 @@
         <module>waltz-model</module>
         <module>waltz-service</module>
         <module>waltz-web</module>
+        <module>waltz-web2</module>
         <module>waltz-jobs</module>
         <module>waltz-data</module>
         <module>waltz-schema</module>
@@ -109,6 +110,7 @@
         <timestamp>${maven.build.timestamp}</timestamp>
         <playwright.skip>true</playwright.skip>
         <jetty.version>9.4.55.v20240627</jetty.version>
+        <javalin.version>6.1.4</javalin.version>
     </properties>
 
 
@@ -137,25 +139,31 @@
             </dependency>
 
             <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-util</artifactId>
-                <version>${jetty.version}</version>
+                <groupId>io.javalin</groupId>
+                <artifactId>javalin</artifactId>
+                <version>${javalin.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-io</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-webapp</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-server</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
+
+<!--            <dependency>-->
+<!--                <groupId>org.eclipse.jetty</groupId>-->
+<!--                <artifactId>jetty-util</artifactId>-->
+<!--                <version>${jetty.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.eclipse.jetty</groupId>-->
+<!--                <artifactId>jetty-io</artifactId>-->
+<!--                <version>${jetty.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.eclipse.jetty</groupId>-->
+<!--                <artifactId>jetty-webapp</artifactId>-->
+<!--                <version>${jetty.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.eclipse.jetty</groupId>-->
+<!--                <artifactId>jetty-server</artifactId>-->
+<!--                <version>${jetty.version}</version>-->
+<!--            </dependency>-->
 
             <!-- json -->
             <dependency>
@@ -551,8 +559,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${plugin.maven-compiler.version}</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>11</source>
+                    <target>11</target>
                     <optimize>true</optimize>
                     <showDeprecation>false</showDeprecation>
                     <showWarnings>true</showWarnings>
