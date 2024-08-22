@@ -20,6 +20,7 @@ public class MainV2 {
                 .start(7070);
 
         new ChangeLogEndpoint(spring.getBean(ChangeLogService.class)).register(app);
+
         System.out.println("Done");
 
 

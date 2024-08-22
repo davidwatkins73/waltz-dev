@@ -37,6 +37,8 @@ import java.util.Optional;
 import static org.finos.waltz.common.Checks.checkNotNull;
 import static org.finos.waltz.common.DateTimeUtilities.toSqlDate;
 import static org.finos.waltz.common.StringUtilities.mkPath;
+import static org.finos.waltz.web2.WebUtilities.getDateParam;
+import static org.finos.waltz.web2.WebUtilities.getEntityReference;
 import static org.finos.waltz.web2.endpoints.EndpointUtilities.getForList;
 
 
@@ -72,19 +74,20 @@ public class ChangeLogEndpoint implements Endpoint {
 //                        readIdSelectionOptionsFromBody(request),
 //                        getLimit(request)));
 //
-//        getForList(
-//                mkPath(BASE_URL, ":kind", ":id"),
-//                (request, response) -> {
-//                    EntityReference ref = getEntityReference(request);
-//                    Optional<java.util.Date> dateParam = getDateParam(request);
-//                    Optional<Integer> limitParam = getLimit(request);
-//
-//                    if (ref.kind() == EntityKind.PERSON) {
-//                        return service.findByPersonReference(ref, dateParam, limitParam);
-//                    } else {
-//                        return service.findByParentReference(ref, dateParam, limitParam);
-//                    }
-//                });
+        getForList(
+                javalin,
+                mkPath(BASE_URL, "{kind}", "{id}"),
+                (ctx) -> {
+                    EntityReference ref = getEntityReference(ctx);
+                    Optional<java.util.Date> dateParam = getDateParam(ctx);
+                    Optional<Integer> limitParam = getLimit(ctx);
+
+                    if (ref.kind() == EntityKind.PERSON) {
+                        return service.findByPersonReference(ref, dateParam, limitParam);
+                    } else {
+                        return service.findByParentReference(ref, dateParam, limitParam);
+                    }
+                });
 //
 //        getForList(
 //                mkPath(BASE_URL, ":kind", ":id", "date-range"),
