@@ -108,7 +108,7 @@
 
         <timestamp>${maven.build.timestamp}</timestamp>
         <playwright.skip>true</playwright.skip>
-        <jetty.version>9.4.55.v20240627</jetty.version>
+        <jetty.version>9.4.57.v20241219</jetty.version>
     </properties>
 
 
@@ -378,7 +378,7 @@
                 <jooq.dialect>H2</jooq.dialect>
                 <jooq.group>org.jooq</jooq.group>
                 <jooq.database>org.jooq.meta.h2.H2Database</jooq.database>
-                <database.catalog></database.catalog> <!-- only required for MSSQL -->
+                <database.catalog/> <!-- only required for MSSQL -->
             </properties>
             <dependencies>
                 <dependency>
@@ -458,7 +458,7 @@
                 <jooq.dialect>POSTGRES</jooq.dialect>
                 <jooq.group>org.jooq</jooq.group>
                 <jooq.database>org.jooq.meta.postgres.PostgresDatabase</jooq.database>
-                <database.catalog></database.catalog> <!-- only required for MSSQL -->
+                <database.catalog/> <!-- only required for MSSQL -->
             </properties>
             <dependencies>
                 <dependency>
@@ -512,7 +512,7 @@
 <!--                <database.user>root</database.user>-->
 <!--                <database.password></database.password>-->
                 <database.schema>PUBLIC</database.schema>
-                <database.catalog></database.catalog>
+                <database.catalog/>
             </properties>
         </profile>
 
@@ -522,7 +522,7 @@
             <properties>
                 <database.url>jdbc:postgresql://localhost:5432/waltz</database.url>
                 <database.user>postgres</database.user>
-                <database.password></database.password>
+                <database.password/>
                 <database.schema>PUBLIC</database.schema>
             </properties>
         </profile>
@@ -533,7 +533,7 @@
             <properties>
                 <database.url>jdbc:mysql://127.0.0.1:3306/waltz</database.url>
                 <database.user>root</database.user>
-                <database.password></database.password>
+                <database.password/>
                 <database.schema>waltz</database.schema>
             </properties>
         </profile>
